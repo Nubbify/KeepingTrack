@@ -7,11 +7,13 @@ from flask_restful import Api
 from flask_jwt_extended import JWTManager
 from data.models import db
 from resources.authentication import UserLogin, UserRegistration
+from resources.user import UpdateUserEmail
 
 jwt = JWTManager()
 api = Api(prefix='/api')
 api.add_resource(UserRegistration, '/auth/register')
 api.add_resource(UserLogin, '/auth/login')
+api.add_resource(UpdateUserEmail, '/user/email')
 
 
 def create_app(test_config=None):
