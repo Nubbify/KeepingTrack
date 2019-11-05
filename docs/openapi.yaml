@@ -41,7 +41,7 @@ paths:
               email: email@email.com
         required: true
       responses:
-        201:
+        200:
           description: User successfully created.
           content:
             application/json:
@@ -59,6 +59,8 @@ paths:
                 username: admin
                 access_token: access_token
                 refresh_token: refresh_token
+        400:
+          description: Bad request body. Make sure all required fields are present.
         403:
           description: User already exists and couldn't be created.
   /auth/login:
@@ -101,10 +103,12 @@ paths:
                 username: admin
                 access_token: access_token
                 refresh_token: refresh_token
+        400:
+          description: Bad request body. Make sure all required fields are present.
+        401:
+          description: Wrong credentials.
         404:
           description: User not found.
-        401: 
-          description: Wrong credentials.
   /user/password:
     put:
       tags:
