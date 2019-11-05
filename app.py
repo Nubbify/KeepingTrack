@@ -19,7 +19,7 @@ def create_app(test_config=None):
     app = Flask(__name__, instance_relative_config=True)
     if test_config is None:
         app.config['JWT_SECRET_KEY'] = 'secret-key'
-        db_url = "sqlite:///" + os.path.join(app.instance_path, "flaskr.sqlite")
+        db_url = "sqlite:///" + os.path.join(app.instance_path, "database.db")
         # ensure the instance folder exists
         os.makedirs(app.instance_path, exist_ok=True)
         app.config['SQLALCHEMY_DATABASE_URI'] = db_url
