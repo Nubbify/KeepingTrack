@@ -7,6 +7,7 @@ from flask_restful import Api
 from flask_jwt_extended import JWTManager
 from data.models import db
 from resources.authentication import UserLogin, UserRegistration
+from flask_cors import CORS
 
 jwt = JWTManager()
 api = Api(prefix='/api')
@@ -31,6 +32,7 @@ def create_app(test_config=None):
     jwt.init_app(app)
 
     api.init_app(app)
+    CORS(app)
 
     @app.route('/')
     def index():
