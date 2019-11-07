@@ -180,6 +180,31 @@ paths:
       responses:
         200:
           description: Notes obtained.
+          content:
+            application/json:
+              schema:
+                type: "array"
+                items: 
+                  type: "object"
+                  properties: {
+                    "id": { "type": "integer" },
+                    "parent_id": { "type": "integer" },
+                    "owner": { "type": "integer" },
+                    "title" : { "type" : "string" },
+                    "goal_date": { "type": "string" },
+                    "data": { "type": "string" }
+                  }
+                  required: ["id", "owner", "title"]
+              example:
+                - id: 2
+                  parent_id: 1
+                  owner: 1
+                  title: Existing note
+                  goal_date: "11/30/2019"
+                  data: Contents of existing note.
+                - id: 1
+                  owner: 1
+                  title: Existing note parent
         401:
           description: Authorization token is not present in header.  
     post:
@@ -202,6 +227,8 @@ paths:
               }
             example:
               title: "New note"
+              goal_date: "help"
+              data: "01/01/2020"
         required: true
       security: 
       - bearerAuth: []
