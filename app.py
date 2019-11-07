@@ -7,7 +7,7 @@ from flask_restful import Api
 from flask_jwt_extended import JWTManager
 from data.models import db
 from resources.authentication import UserLogin, UserRegistration
-from resources.user import UpdateUserEmail
+from resources.user import UpdateUserEmail, UpdateUserPassword
 from flask_cors import CORS
 
 
@@ -16,6 +16,7 @@ api = Api(prefix='/api')
 api.add_resource(UserRegistration, '/auth/register')
 api.add_resource(UserLogin, '/auth/login')
 api.add_resource(UpdateUserEmail, '/user/email')
+api.add_resource(UpdateUserPassword, '/user/password')
 
 
 def create_app(test_config=None):
