@@ -4,7 +4,7 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 
 First, in order to download client-side dependencies make sure to run:
 
-### 'npm install'
+### `npm install`
 
 This will create a node_modules folder that holds all the source code for the 
 dependencies, but should absolutely be included in your .gitignore. 
