@@ -1,0 +1,20 @@
+variables:
+  DOCKER_DRIVER: overlay2
+
+stages:
+  - build
+  - test
+
+build:
+  stage: build
+  script:
+    - pip install -r requirements.txt
+    - python setup.py install
+
+
+test:
+  stage: test
+  retry: 2
+  script:
+    - pip install -r requirements.txt
+    - python setup.py test
