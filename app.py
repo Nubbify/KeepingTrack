@@ -8,6 +8,7 @@ from flask_jwt_extended import JWTManager
 from data.models import db
 from resources.authentication import UserLogin, UserRegistration
 from resources.user import UpdateUserEmail, UpdateUserPassword
+from resources.notes import GetAllNotes, GetNoteByID
 from flask_cors import CORS
 
 
@@ -17,6 +18,9 @@ api.add_resource(UserRegistration, '/auth/register')
 api.add_resource(UserLogin, '/auth/login')
 api.add_resource(UpdateUserEmail, '/user/email')
 api.add_resource(UpdateUserPassword, '/user/password')
+api.add_resource(GetAllNotes, '/notes')
+api.add_resource(GetNoteByID, '/notes/<int:note_id>')
+
 
 
 def create_app(test_config=None):

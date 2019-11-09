@@ -1,6 +1,6 @@
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy_utils import PasswordType, force_auto_coercion
-from data import Serializer
+from data.Serializer import Serializer
 
 db = SQLAlchemy()
 
@@ -23,7 +23,7 @@ class Note(db.Model):
     __tablename__ = 'note'
     id = db.Column(db.Integer, primary_key=True)
     parent_id = db.Column(db.Integer, db.ForeignKey('note.id'))
-    owner = db.Column(db.Integer, db.ForeignKey('user.id'))
+    owner = db.Column(db.String, db.ForeignKey('user.username'))
     title = db.Column(db.String(50))
     goal_date = db.Column(db.Date)
     data = db.Column(db.String(5000))
@@ -41,8 +41,8 @@ force_auto_coercion()
 
 class User(db.Model):
     __tablename__ = 'user'
-    id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(20), unique=True)
+    #id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(20), primary_key=True)
     email = db.Column(db.String(30), unique=True)
     password = db.Column(PasswordType(
         schemes=[

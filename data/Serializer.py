@@ -1,3 +1,6 @@
+from sqlalchemy import inspect
+
+
 class Serializer(object):
 
     def serialize(self):
