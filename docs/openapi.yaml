@@ -136,6 +136,28 @@ paths:
       responses:
         200:
           description: Password successfully updated.
+          content:
+            application/json:
+              schema:
+                {
+                  type: "object",
+                  properties: {
+                    "id": { "type": "integer" },
+                    "parent_id": { "type": "integer" },
+                    "owner": { "type": "integer" },
+                    "title" : { "type" : "string" },
+                    "goal_date": { "type": "string" },
+                    "data": { "type": "string" }
+                  },
+                  required: ["id", "owner", "title"]
+                }
+              example:
+                id: 2
+                parent_id: 1
+                owner: 1
+                title: Existing note
+                goal_date: "11/30/2019"
+                data: Contents of existing note.
         401:
           description: Authorization token is not present in header.  
         403:
@@ -332,6 +354,8 @@ paths:
           type: integer
       summary: Delete note.
       operationId: deleteNote 
+      security: 
+      - bearerAuth: []
       responses:
         200:
           description: Note deleted.
