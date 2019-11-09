@@ -336,6 +336,24 @@ paths:
       responses:
         200:
           description: Note updated.
+          content:
+            application/json:
+              schema:
+                {
+                  type: "object",
+                  properties: {
+                    "id": { "type": "integer" },
+                    "title" : { "type" : "string" },
+                    "goal_date": { "type": "string" },
+                    "data": { "type": "string" }
+                  },
+                  required: ["id", "owner", "title"]
+                }
+              example:
+                id: 2
+                title: Existing note
+                goal_date: "11/30/2019"
+                data: Contents of existing note.
         400:
           description: Bad or malformed input.
         401:
@@ -359,6 +377,18 @@ paths:
       responses:
         200:
           description: Note deleted.
+          content:
+            application/json:
+              schema:
+                {
+                  type: "object",
+                  properties: {
+                    "message deleted": {"type":"string"},
+                    
+                  },
+                }
+              example:
+                message deleted: "true"
         401:
           description: Authorization token is not present in header.    
         403:
