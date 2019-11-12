@@ -13,4 +13,4 @@ RUN npm install --silent
 RUN npm install react-scripts -g --silent
 
 # Start the client
-CMD npm start
+CMD npm start nm

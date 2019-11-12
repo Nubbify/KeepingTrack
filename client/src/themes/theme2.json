@@ -1,0 +1,36 @@
+{
+  "palette": {
+    "common": {
+      "black": "#000",
+      "white": "rgba(255, 255, 255, 1)"
+    },
+    "background": {
+      "paper": "rgba(255, 255, 255, 1)",
+      "default": "rgba(15, 27, 31, 1)"
+    },
+    "primary": {
+      "light": "rgba(113, 135, 146, 1)",
+      "main": "rgba(69, 90, 100, 1)",
+      "dark": "rgba(28, 49, 58, 1)",
+      "contrastText": "#fff"
+    },
+    "secondary": {
+      "light": "rgba(86, 199, 214, 1)",
+      "main": "rgba(0, 150, 165, 1)",
+      "dark": "rgba(0, 104, 118, 1)",
+      "contrastText": "rgba(255, 255, 255, 1)"
+    },
+    "error": {
+      "light": "#e57373",
+      "main": "#f44336",
+      "dark": "#d32f2f",
+      "contrastText": "rgba(255, 255, 255, 1)"
+    },
+    "text": {
+      "primary": "rgba(255, 255, 255, 0.87)",
+      "secondary": "rgba(0, 0, 0, 0.54)",
+      "disabled": "rgba(255, 255, 255, 0.45)",
+      "hint": "rgba(0, 0, 0, 0.38)"
+    }
+  }
+}

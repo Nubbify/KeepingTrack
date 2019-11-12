@@ -1,19 +1,19 @@
-import React, {Component} from 'react';
-import {BrowserRouter as Router, Switch, Link, Route} from 'react-router-dom';
+import React, {Fragment, useState, useEffect} from 'react';
+import Navbar from "../Containers/Navbar";
+import {connect} from 'react-redux';
 
-class Home extends Component{
-    constructor() {
-        super();
-        this.state = {};
-    }
+const Home = () => {
+    return (
+        <Fragment>
+            <Navbar />
 
-    render() {
-        return (
-            <div>
-                Home!
-            </div>
-        )
-    }
-}
+        </Fragment>
+    );
+};
 
-export default Home;
+const mapStateToProps = state => {
+};
+
+export default connect(
+    mapStateToProps,
+)(Home);
