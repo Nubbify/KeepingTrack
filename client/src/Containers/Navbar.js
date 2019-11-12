@@ -1,48 +1,51 @@
-import React, {Component} from 'react';
-import {AppBar, Toolbar, IconButton, Typography, Button, styled} from "@material-ui/core";
-import {Menu} from "@material-ui/icons"
-import {BrowserRouter as Router, Switch, Link, Route} from 'react-router-dom';
+import React, {Fragment, useState} from 'react';
+import {AppBar, Toolbar, makeStyles} from "@material-ui/core";
 import Grid from "@material-ui/core/Grid";
+import PropTypes from 'prop-types';
+import {connect} from 'react-redux';
+import {logout} from "../actions/authActions";
+import Button from "@material-ui/core/Button";
+import Login from "./Login";
 
-class Navbar extends Component {
-    constructor() {
-        super();
-        this.state = {};
-        this.handleLogin = this.handleLogin.bind(this);
-    }
+const Navbar = ({auth: {isAuthenticated, loading}, logout}) => {
+    const [open, setOpen] = useState(false);
 
-    handleLogin(e) {
+    const authLinks = (
+        ''
+    );
 
-    }
+    const guestLinks = (
+        ''
+    );
 
-    render() {
-        const Login = styled(Button)({
-            flexGrow: 1
-        });
-        return (
-            <AppBar position="static">
-                <Toolbar variant="dense">
-                    {(this.props.from == 'welcome' || this.props.from == 'success') ?
-                        <Grid container direction="row" justify={'flex-end'} alignItems="center">
-                            <Grid item>
-                                <Link to={'/login'}>
-                                    <Login color={'secondary'} variant={'contained'}>
-                                        <Typography variant={'button'}>
-                                            Login
-                                        </Typography>
-                                    </Login>
-                                </Link>
-                            </Grid>
-                        </Grid>
-                        :
-                        <IconButton edge="start" color="inherit" aria-label="menu">
-                            <Menu/>
-                        </IconButton>
-                    }
-                </Toolbar>
-            </AppBar>
-        )
-    }
-}
+    const handleOpen = () => {
+        setOpen(true);
+    };
 
-export default Navbar;
+    const handleClose = () => {
+        console.log('here')
+        setOpen(false);
+    };
+
+    return (
+        <AppBar position="static">
+            <Toolbar variant="dense">
+                <Grid container direction={'row'} justify={'flex-end'} spacing={3}>
+                    <Button onClick={handleOpen}>Login</Button>
+                    <Login open={open} handleClose={handleClose}/>
+                </Grid>
+            </Toolbar>
+        </AppBar>
+    )
+};
+
+Navbar.propTypes = {
+    logout: PropTypes.func.isRequired,
+    auth: PropTypes.object.isRequired,
+};
+
+const mapStateToProps = state => ({
+    auth: state.auth
+});
+
+export default connect(mapStateToProps, {logout})(Navbar);

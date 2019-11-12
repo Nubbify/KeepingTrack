@@ -1,99 +1,83 @@
-import React, {Component} from 'react';
+import React, {useState} from 'react';
 import PropTypes from 'prop-types';
-import {withStyles, ThemeProvider} from '@material-ui/core/styles'
-import {TextField, Typography, Button, createMuiTheme, CssBaseline} from "@material-ui/core";
-import Grid from "@material-ui/core/Grid";
-import Divider from "@material-ui/core/Divider";
-import Link from "@material-ui/core/Link";
+import {Redirect} from 'react-router-dom';
+import {connect} from "react-redux";
+import {login} from "../actions/authActions";
+import {TextField, Typography, Button, Link, Grid, Modal, makeStyles, Paper} from "@material-ui/core";
 
-const theme = createMuiTheme({
-    palette: {
-        type: 'dark',
-        background: {default: '#1C313A'}
-    }
-});
-
-const styles = {
-    textField1: {
-        marginTop: 150,
-        alignItems: 'center',
-        justify: 'center',
-        alignText: 'center',
-        color: theme.palette.text.primary
+const useStyles = makeStyles(theme => ({
+    paper: {
+        position: 'absolute',
+        float: 'left',
+        left: '50%',
+        top: '30%',
+        transform: 'translate(-50%, -50%)',
+        width: 400,
+        backgroundColor: theme.palette.background.paper,
+        border: '2px solid #000',
+        boxShadow: theme.shadows[5],
+        padding: theme.spacing(2, 4, 3),
     },
-    textField2: {
-        marginBottom: 20,
-        alignItems: 'center',
-        justify: 'center',
-        alignText: 'center',
-        color: theme.palette.text.primary
-    },
-    textField: {
-        alignItems: 'center',
-        justify: 'center',
-        alignText: 'center',
-        color: theme.palette.text.primary
-    },
-    button: {
-        margin: '15',
-        backgroundColor: theme.palette.primary.light
-    }
-};
+}));
 
-class Login extends Component {
-    constructor() {
-        super();
-        this.state = {
-            email: '',
-            password: '',
-        };
+const Login = ({login, isAuthenticated, open, handleClose}) => {
+    const classes = useStyles();
+    const [formData, setFormData] = useState({
+        userName: '',
+        password: ''
+    });
 
-        this.login = this.login.bind(this);
-        this.handleChange = this.handleChange.bind(this);
-    }
+    const {userName, password} = formData;
 
-    login = () => {
+    const handleChange = e => {
+        setFormData({...formData, [e.target.name]: e.target.value});
     };
 
-    handleChange = input => e => {
-        this.setState({[input]: e.target.value});
+    const handleSubmit = async e => {
+        e.preventDefault();
+        login(userName, password);
+    };
+
+    if (isAuthenticated) {
+        handleClose();
+        return <Redirect to={'/home'}/>
     }
 
-    render() {
-        const {theme} = this.props;
-        const {email, password} = this.state;
-        const values = {email, password};
-        const classes = this.props.classes;
-        return (
-            <ThemeProvider theme={theme}>
-                <CssBaseline/>
-                <Grid container direction={'column'} justify={'center'} alignItems={'center'} spacing={3}>
+    return (
+        <Modal
+            aria-labelledby={'login-modal'}
+            aria-describedby="simple-modal-description"
+            open={open}
+            onClose={handleClose}
+        >
+            <Paper className={classes.paper}>
+                <Grid container direction={'column'} justify={'center'} alignItems={'center'} spacing={3}
+                      id={'login-modal'}>
                     <Grid item xs={12}>
                         <TextField
-                            className={classes.textField1}
-                            label={'Email'}
+                            label={'User Name'}
+                            name={'userName'}
                             variant={'outlined'}
-                            floatingLabelText={'Email'}
-                            onChange={this.handleChange('email')}
-                            defaultValue={values.email}
+                            onChange={e => handleChange(e)}
+                            defaultValue={userName}
                         />
                     </Grid>
                     <Grid item xs={12}>
                         <TextField
-                            className={classes.textField2}
                             label={'Password'}
+                            name={'password'}
                             variant={'outlined'}
-                            floatingLabelText={'Password'}
-                            onChange={this.handleChange('password')}
-                            defaultValue={values.password}
+                            onChange={e => handleChange(e)}
+                            defaultValue={password}
                         />
                     </Grid>
                     <Grid item>
-                        <Link to={'/home'}>
+                        <Link to={'/home'} style={{'textDecoration': 'none'}}>
                             <Button
                                 label={'Login'}
                                 variant={'contained'}
-                                className={classes.button}
+                                onClick={handleSubmit}
+                                color={'secondary'}
                             >
                                 <Typography variant={'button'}>
                                     Login
@@ -102,9 +86,21 @@ class Login extends Component {
                         </Link>
                     </Grid>
                 </Grid>
-            </ThemeProvider>
-        );
-    }
-}
+            </Paper>
+        </Modal>
+    );
+};
 
-export default withStyles(styles)(Login);
+Login.propTypes = {
+    login: PropTypes.func.isRequired,
+    isAuthenticated: PropTypes.bool,
+    open: PropTypes.bool.isRequired,
+    handleClose: PropTypes.func.isRequired,
+};
+
+const mapStateToProps = state => ({
+    isAuthenticated: state.isAuthenticated
+});
+
+
+export default connect(mapStateToProps, {login})(Login);
