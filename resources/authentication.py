@@ -63,4 +63,4 @@ class UserRefresh(Resource):
     @jwt_required
     def get(self):
         username = get_jwt_identity()
-        return {'logged_in_as': username}, 200
+        return {'username': username}, 200

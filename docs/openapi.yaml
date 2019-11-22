@@ -152,12 +152,12 @@ paths:
                 {
                   type: "object",
                   properties: {
-                    "logged_in_as": { "type": "string" },
+                    "username": { "type": "string" },
                   },
-                  required: ["logged_in_as"]
+                  required: ["username"]
                 }
               example:
-                logged_in_as: username
+                username: username
         401:
           description: Wrong credentials. Make sure the access token is in the header.
   /user/password:
