@@ -15,6 +15,8 @@ tags:
   description: Endpoints relating to user customization
 - name: notes
   description: Endpoints relating to notes
+- name: attach
+description: Endpoints relating to attachments
 paths:
   /auth/register:
     post:
@@ -393,6 +395,135 @@ paths:
           description: Authorization token is not present in header.    
         403:
           description: Note does not exist or user is not authorized to delete this note.
+          
+ /attach/upload:
+    post:
+      tags:
+      - attach
+      parameters: 
+      - in: path
+        name: note_id
+        description: "ID of note to get information for."
+        required: true
+        schema:
+          type: integer
+      summary: Upload a file
+      operationId: upload
+      security: 
+      - bearerAuth: []
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              {
+                type: "object",
+                properties: {
+                  "file": { "type": "string", format: byte, description: "Base-64 encoded contents of file"},
+                  "filename": { "type": "string" },
+                  "note_id": {"type": "integer"}
+                },
+                required: ["filename", "file", "note_id"]
+              }
+            example:
+              #coming soon
+              
+        required: true
+      responses:
+        200:
+          description: Attachment uploaded to database.
+          content:
+            application/json:
+              schema:
+                {
+                  type: "object",
+                  properties: {
+                    "attachment_id": {type: integer}
+                  },
+                  required: ["attachment_id"]
+                }
+              example:
+                attachment_id: 5
+        400:
+          description: Bad request body. Make sure all required fields are present.
+        401:
+          description: Authorization token is not present in header.  
+        403:
+          description: Note does not exist or user is not authorized to add files to this note.
+          
+  /attach/{attachment_id}:
+    get:
+      tags:
+      - attach
+      parameters: 
+      - in: path
+        name: attachment_id
+        description: "ID of note to get information for."
+        required: true
+        schema:
+          type: integer
+      summary: Get a file from database.
+      operationId: getAttachment
+      security: 
+      - bearerAuth: []
+      responses:
+        200:
+          description: Attachment found and returned.
+          content:
+            application/json:
+              schema:
+                {
+                  type: "object",
+                  properties: {
+                    "attachment_id": {type: integer},
+                    "note_id": {type: integer},
+                    "file": {type: string, format: byte, description: Base64 - encoded file}
+                  },
+                  required: ["attachment_id, note_id, file"]
+                }
+              example:
+                attachment_id: 5
+                note_id: 1
+                file: 
+        400:
+          description: Bad request.
+        401:
+          description: Authorization token is not present in header.  
+        403:
+          description: Attachment does not exist. 
+      
+    delete:
+      tags:
+        - attach
+      parameters:
+      - in: path
+        name: attachment_id
+        description: "ID of attachment to delete."
+        required: true
+        schema:
+          type: integer
+      summary: Delete attachment.
+      operationId: deleteAttachment 
+      security: 
+      - bearerAuth: []
+      responses:
+        200:
+          description: Note deleted.
+          content:
+            application/json:
+              schema:
+                {
+                  type: "object",
+                  properties: {
+                    "note_id": {type: integer}
+                    
+                  },
+                }
+              example:
+               note_id: 3
+        401:
+          description: Authorization token is not present in header.    
+        403:
+          description: Attachment does not exist or user is not authorized to delete this attachment.
 components:
   securitySchemes:
     bearerAuth:            
