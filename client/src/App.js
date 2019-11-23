@@ -1,4 +1,4 @@
-import React, {Component, useEffect} from 'react';
+import React, {useEffect} from 'react';
 import {BrowserRouter as Router, Route, Switch} from 'react-router-dom';
 import './App.css';
 import Welcome from './Pages/Welcome';
@@ -8,11 +8,12 @@ import Profile from './Pages/Profile';
 import Register from './Pages/Register';
 import {createMuiTheme} from "@material-ui/core";
 import {ThemeProvider} from '@material-ui/core/styles'
-import Login from "./Containers/Login";
+import LoginPage from "./Pages/LoginPage";
 import {Provider} from 'react-redux';
 import store from './store';
 import {loadUser} from "./actions/authActions";
 import setAuthToken from "./utils/setAuthToken";
+import PrivateRoute from "./Components/Routing/PrivateRoute";
 
 const theme = createMuiTheme({
         palette: {
@@ -22,6 +23,9 @@ const theme = createMuiTheme({
             secondary: {
                 main: '#b2dfdb',
             },
+            background: {
+                main: '#ffffff'
+            }
         },
     }
 );
@@ -42,10 +46,10 @@ const App = () => {
                     <Switch>
                         <Route exact path={'/'}> <Welcome theme={theme}/> </Route>
                         <Route path={'/register'}> <Register theme={theme}/> </Route>
-                        <Route path={'/login'}> <Login theme={theme}/> </Route>
-                        <Route path={'/home'}> <Home theme={theme}/> </Route>
-                        <Route path={'/cal'}> <Calendar theme={theme}/> </Route>
-                        <Route path={'/profile'}> <Profile theme={theme}/> </Route>
+                        <Route path={'/login'}> <LoginPage theme={theme}/> </Route>
+                        <PrivateRoute path={'/home'} component={Home} theme={theme}/>
+                        {/*<PrivateRoute path={'/home'} component={Calendar} theme={theme}/>*/}
+                        {/*<PrivateRoute path={'/home'} component={Profile} theme={theme}/>*/}
                     </Switch>
                 </Router>
             </Provider>

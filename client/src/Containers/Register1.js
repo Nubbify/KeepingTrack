@@ -36,7 +36,7 @@ const useStyles = makeStyles({
     }
 });
 
-const Register1 = ({nextStep, values, handleChange}) => {
+const Register1 = ({nextStep, handleChange, values}) => {
     const classes = useStyles();
     return (
             <Grid container direction={'column'} justify={'center'} alignItems={'center'} spacing={3}>
@@ -55,7 +55,7 @@ const Register1 = ({nextStep, values, handleChange}) => {
                             <TextField
                                 label={'Enter email here'}
                                 name={'email'}
-                                onChange={e => handleChange}
+                                onChange={handleChange}
                                 defaultValue={values.email}
                             />
                         </Grid>
