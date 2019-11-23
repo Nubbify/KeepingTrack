@@ -4,11 +4,11 @@ import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import Grid from '@material-ui/core/Grid';
-import {BrowserRouter as Router, Link, Redirect} from "react-router-dom";
+import {Link, Redirect} from "react-router-dom";
 import Navbar from "../Containers/Navbar";
-import CssBaseline from "@material-ui/core/CssBaseline";
-import {Menu, Search, More, Add} from "@material-ui/icons";
 import Fab from "@material-ui/core/Fab";
+import PropTypes from "prop-types";
+import {connect} from "react-redux";
 
 const useStyles = makeStyles(theme => ({
     title: {
@@ -22,7 +22,7 @@ const useStyles = makeStyles(theme => ({
     regButton: {
         zIndex: 1,
         top: -65,
-        boxShadow: '0px 0px 0px 15px rgba(255,255,255,1)'
+        boxShadow: '0px 0px 0px 15px rgba(250,250,250,1)'
     },
     link: {
         textDecoration: 'none',
@@ -32,8 +32,12 @@ const useStyles = makeStyles(theme => ({
     }
 }));
 
-const Welcome = () => {
+const Welcome = ({isAuthenticated}) => {
     const classes = useStyles();
+
+    if (isAuthenticated) {
+        return <Redirect to={'/home'}/>
+    }
 
     return (
         <Fragment>
@@ -61,4 +65,13 @@ const Welcome = () => {
     );
 };
 
-export default Welcome;
+Welcome.propTypes = {
+    isAuthenticated: PropTypes.bool,
+};
+
+const mapStateToProps = state => ({
+    isAuthenticated: state.auth.isAuthenticated
+});
+
+
+export default connect(mapStateToProps, {})(Welcome);

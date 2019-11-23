@@ -8,12 +8,12 @@ export const loadUser = () => async dispatch => {
         setAuthToken(localStorage.access_token);
     }
 
-    if (localStorage.refresh_token) {
-        setAuthToken(localStorage.refresh_token);
-    }
+    // if (localStorage.refresh_token) {
+    //     setRefreshToken(localStorage.refresh_token);
+    // }
 
     try {
-        const res = await axios.get('http://localhost:5000/api/auth/login')
+        const res = await axios.get('http://localhost:5000/api/auth/refresh');
 
         dispatch({
             type: USER_LOADED,
@@ -27,14 +27,14 @@ export const loadUser = () => async dispatch => {
 };
 
 
-export const register = ({ username, email, password }) => async dispatch => {
+export const register = ({username, email, password}) => async dispatch => {
     const config = {
         headers: {
             'Content-Type': 'application/json'
         }
     };
 
-    const body = JSON.stringify({ username, email, password });
+    const body = JSON.stringify({username, email, password});
 
     try {
         const res = await axios.post('http://localhost:5000/api/auth/register', body, config);
@@ -52,14 +52,14 @@ export const register = ({ username, email, password }) => async dispatch => {
     }
 };
 
-export const login = (username, password) => async dispatch => {
+export const login = ({username, password}) => async dispatch => {
     const config = {
         headers: {
             'Content-Type': 'application/json'
         }
     };
 
-    const body = JSON.stringify({ username, password });
+    const body = JSON.stringify({username, password});
 
     try {
         const res = await axios.post('http://localhost:5000/api/auth/login', body, config);
@@ -81,4 +81,4 @@ export const logout = () => dispatch => {
     dispatch({
         type: LOGOUT
     })
-}
+};

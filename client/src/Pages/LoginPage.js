@@ -1,44 +1,33 @@
 import React, {useState} from 'react';
 import PropTypes from 'prop-types';
-import {Redirect} from 'react-router-dom';
+import {Button, TextField, Typography} from "@material-ui/core";
+import Grid from "@material-ui/core/Grid";
+import {makeStyles} from '@material-ui/core/styles';
+import Paper from "@material-ui/core/Paper";
 import {connect} from "react-redux";
 import {login} from "../actions/authActions";
-import {TextField, Typography, Button, Link, Grid, Modal, makeStyles, Paper} from "@material-ui/core";
+import {Redirect} from "react-router";
+import FormControl from "@material-ui/core/FormControl";
+import clsx from "clsx";
 import InputLabel from "@material-ui/core/InputLabel";
-import Input from "@material-ui/core/Input";
+import OutlinedInput from "@material-ui/core/OutlinedInput";
 import InputAdornment from "@material-ui/core/InputAdornment";
 import IconButton from "@material-ui/core/IconButton";
 import {Visibility, VisibilityOff} from "@material-ui/icons";
-import FormControl from "@material-ui/core/FormControl";
-import clsx from "clsx";
-import OutlinedInput from "@material-ui/core/OutlinedInput";
 
-const useStyles = makeStyles(theme => ({
-    paper: {
-        position: 'absolute',
-        float: 'left',
-        left: '50%',
-        top: '30%',
-        transform: 'translate(-50%, -50%)',
-        width: 400,
-        backgroundColor: theme.palette.background.paper,
-        border: '2px solid #000',
-        boxShadow: theme.shadows[5],
-        padding: theme.spacing(2, 4, 3),
+const useStyles = makeStyles({
+    formWrapper: {
+        marginTop: '200px',
+        padding: '25px 25px 45px 25px',
+        justifyContent: 'center',
+        borderRadius: '20px'
     },
-    margin: {
-        margin: theme.spacing(1),
+    buttonGroup: {
+        marginTop: '5px'
     },
-    withoutLabel: {
-        marginTop: theme.spacing(3),
-    },
-    textField: {
-        width: 200,
-    },
+});
 
-}));
-
-const Login = ({login, isAuthenticated, open, handleClose}) => {
+const LoginPage = ({login, isAuthenticated}) => {
     const classes = useStyles();
     const [formData, setFormData] = useState({
         userName: '',
@@ -48,13 +37,17 @@ const Login = ({login, isAuthenticated, open, handleClose}) => {
 
     const {userName, password} = formData;
 
+
     const handleChange = e => {
         setFormData({...formData, [e.target.name]: e.target.value});
     };
 
     const handleSubmit = async e => {
-        e.preventDefault();
-        login({username: userName, password});
+        const user = {
+            username: userName,
+            password
+        };
+        login(user);
     };
 
     const handleClickShowPassword = () => {
@@ -66,18 +59,13 @@ const Login = ({login, isAuthenticated, open, handleClose}) => {
     };
 
 
-    if(isAuthenticated){
-        return <Redirect to={'/home'}/>;
-    };
+    if (isAuthenticated) {
+        return <Redirect to={'/home'}/>
+    }
 
     return (
-        <Modal
-            aria-labelledby={'login-modal'}
-            aria-describedby="simple-modal-description"
-            open={open}
-            onClose={handleClose}
-        >
-            <Paper className={classes.paper}>
+        <Grid container direction={'column'} justify={'center'} alignItems={'center'} spacing={3}>
+            <Paper className={classes.formWrapper}>
                 <Grid container direction={'column'} justify={'center'} alignItems={'center'} spacing={3}
                       id={'login-modal'}>
                     <Grid item xs={12}>
@@ -114,30 +102,26 @@ const Login = ({login, isAuthenticated, open, handleClose}) => {
                         </FormControl>
                     </Grid>
                     <Grid item>
-                        <Link to={'/home'} style={{'textDecoration': 'none'}}>
-                            <Button
-                                label={'Login'}
-                                variant={'contained'}
-                                onClick={handleSubmit}
-                                color={'secondary'}
-                            >
-                                <Typography variant={'button'}>
-                                    Login
-                                </Typography>
-                            </Button>
-                        </Link>
+                        <Button
+                            label={'Login'}
+                            variant={'contained'}
+                            onClick={handleSubmit}
+                            color={'secondary'}
+                        >
+                            <Typography variant={'button'}>
+                                Login
+                            </Typography>
+                        </Button>
                     </Grid>
                 </Grid>
             </Paper>
-        </Modal>
+        </Grid>
     );
 };
 
-Login.propTypes = {
+LoginPage.propTypes = {
     login: PropTypes.func.isRequired,
     isAuthenticated: PropTypes.bool,
-    open: PropTypes.bool.isRequired,
-    handleClose: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = state => ({
@@ -145,4 +129,4 @@ const mapStateToProps = state => ({
 });
 
 
-export default connect(mapStateToProps, {login})(Login);
+export default connect(mapStateToProps, {login})(LoginPage);
