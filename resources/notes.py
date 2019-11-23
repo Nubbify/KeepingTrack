@@ -28,21 +28,16 @@ class GetAllNotes(Resource):
         parser = reqparse.RequestParser()
         parser.add_argument('title', help='Add a title', required=True)
         parser.add_argument('data', help='Add a note body', required=False)
-            #id = db.Column(db.Integer, primary_key=True)
-            #parent_id = db.Column(db.Integer, db.ForeignKey('note.id'))
-            #owner = db.Column(db.Integer, db.ForeignKey('user.id'))
-            #title = db.Column(db.String(50))
-            #goal_date = db.Column(db.Date)
-            #data = db.Column(db.String(5000))
-            #parent = db.relationship("Note", remote_side=[id]
-
-
+        parser.add_argument('goal_date', help='Add a goal date', required = False)
+        parser.add_argument('parent_id', help='Choose a parent', required = False)
         try:
             data = parser.parse_args()
-            new_note = Note(owner=get_jwt_identity(),title=data['title'], data=data['data'])
+            new_note = Note(owner=get_jwt_identity(),title=data['title'], data=data['data'], goal_date=data['goal_date'],parent_id=data['parent_id'])
             db.session.add(new_note)
             db.session.commit()
-            return 200
+            output = {"id": new_note.id, "title": new_note.title, "data": new_note.data, "goal_date": new_note.goal_date,
+                      "parent_id": new_note.parent_id, "owner": new_note.owner}
+            return json.dumps(output), 200
         except Exception:
             raise Exception
 
