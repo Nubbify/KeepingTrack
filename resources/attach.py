@@ -21,7 +21,7 @@ class UploadAttachment(Resource):
             new_att = Attachment(note=data['note_id'], file=data['file'])
             db.session.add(new_att)
             db.session.commit()
-            
+
             return 200
         except Exception:
             raise Exception
