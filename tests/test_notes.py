@@ -93,5 +93,7 @@ def test_delete_note(client, app):
     with app.app_context():
         note = Note.query.filter(Note.title == "New Note").first()
         client.delete("/api/notes", query_string={"note_id": note.id}, headers=access_headers, data={})
-        assert Note.query.filter(Note.id == note.id) is None
+        query = Note.query.filter(Note.id == note.id).first()
+        assert(query is None)
+
 
