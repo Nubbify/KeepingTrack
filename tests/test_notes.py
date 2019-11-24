@@ -52,11 +52,10 @@ def test_get_single_note(client, app):
                                                                   "data": "help"})
     assert res.status_code == 200
 
-    note = Note.query.filter(Note.title == "New Note").first()
-
-    res = client.get("/notes", params={"note_id": note.id}, headers=access_headers, data={})
-    print(res)
-    assert res.status_code == 200
+    with app.app_context():
+        note = Note.query.filter(Note.title == "New Note").first()
+        res = client.get("/notes", query_string={"note_id": note.id}, headers=access_headers, data={})
+        assert res.status_code == 200
 
 
 def test_update_note(client, app):
@@ -70,14 +69,12 @@ def test_update_note(client, app):
                                                                   "data": "help"})
     assert res.status_code == 200
 
-    note = Note.query.filter(Note.title == "New Note").first()
-
-    res = client.put("/api/notes", params={"note_id": note.id}, headers=access_headers,
-                    data={"title": "finished note", "data": "task complete"})
-    print(res)
-    assert res.status_code == 200
-
     with app.app_context():
+        note = Note.query.filter(Note.title == "New Note").first()
+
+        res = client.put("/api/notes", query_string={"note_id": note.id}, headers=access_headers,
+                    data={"title": "finished note", "data": "task complete"})
+        assert res.status_code == 200
         note = Note.query.filter(Note.id == note.id).first()
         assert note.title == "finished note"
         assert note.data == "task complete"
@@ -93,10 +90,8 @@ def test_delete_note(client, app):
                                                                   "goal_date": "01/01/2020",
                                                                   "data": "help"})
     assert res.status_code == 200
-    note = Note.query.filter(Note.title == "New Note").first()
-
-    res = client.delete("/api/notes", params={"note_id": note.id}, headers=access_headers, data={})
-
     with app.app_context():
+        note = Note.query.filter(Note.title == "New Note").first()
+        client.delete("/api/notes", query_string={"note_id": note.id}, headers=access_headers, data={})
         assert Note.query.filter(Note.id == note.id) is None
 
