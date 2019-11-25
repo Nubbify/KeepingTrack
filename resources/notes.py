@@ -5,6 +5,7 @@ import json
 from flask import jsonify
 from data.Serializer import Serializer
 import re
+from datetime import datetime
 
 
 # parser.add_argument('password', help='Password cannot be blank', required=True)
@@ -28,6 +29,9 @@ class GetAllNotes(Resource):
         parser = reqparse.RequestParser()
         parser.add_argument('title', help='Add a title', required=True)
         parser.add_argument('data', help='Add a note body', required=False)
+        parser.add_argument('parent_id', required = False)
+        parser.add_argument('goal_date', required = False)
+        parser.add_argument('parent_id', required=False)
             #id = db.Column(db.Integer, primary_key=True)
             #parent_id = db.Column(db.Integer, db.ForeignKey('note.id'))
             #owner = db.Column(db.Integer, db.ForeignKey('user.id'))
@@ -39,10 +43,26 @@ class GetAllNotes(Resource):
 
         try:
             data = parser.parse_args()
-            new_note = Note(owner=get_jwt_identity(),title=data['title'], data=data['data'])
+            if(data['goal_date'] is not None):
+                date = datetime.strptime(data['goal_date'], "%d/%m/%Y").date()
+                print(date)
+                print(type(date))
+            new_note = Note(owner=get_jwt_identity(),title=data['title'], data=data['data'] 
+                          , goal_date=date,parent_id=data['parent_id'])
             db.session.add(new_note)
             db.session.commit()
-            return 200
+            print(type(new_note.goal_date) )
+            date = None
+            if(new_note.goal_date is not None):
+                date = ""+str(new_note.goal_date.month)+"/"+str(new_note.goal_date.day)+"/"+str(new_note.goal_date.year)
+                print(date)
+
+            output = {"id": new_note.id, "title": new_note.title, "data": new_note.data,
+                      "goal_date": date,
+                      "parent_id": new_note.parent_id, "owner": new_note.owner}
+            print(json.dumps(output))
+            return json.dumps(output), 200
+
         except Exception:
             raise Exception
 
@@ -59,9 +79,13 @@ class GetNoteByID(Resource):
             #data = parser.parse_args()
             note = db.session.query(Note).filter(Note.owner == get_jwt_identity(), Note.id == note_id).first()
             if note is None:
-                return {}, 403
+                return 403
+            date = None
+            if(note.goal_date is not None):
+                date = ""+str(note.goal_date.month)+"/"+str(note.goal_date.day)+"/"+str(note.goal_date.year)
+
             output = {"id": note.id, "parent_id":note.parent_id,"owner": note.owner,
-                 "title": note.title, "goal_date":note.goal_date,"data": note.data}
+                 "title": note.title, "goal_date":date,"data": note.data}
             return json.dumps(output), 200
         except Exception:
             raise Exception
@@ -78,6 +102,7 @@ class GetNoteByID(Resource):
         try:
             data = parser.parse_args()
             note = db.session.query(Note).filter(Note.owner == get_jwt_identity(), Note.id == note_id).first()
+            date = None
             if note is None:
                 return json.dumps({}), 403
             if data['title'] is not None:
@@ -86,10 +111,12 @@ class GetNoteByID(Resource):
                 note.data = data['data']
             if data['goal_date'] is not None:
                 note.goal_date = data['goal_date']
+                date = ""+str(note.goal_date.month)+"/"+str(note.goal_date.day)+"/"+str(note.goal_date.year)
             db.session.commit()
 
             #note = db.session.query(Note).filter(Note.owner == get_jwt_identity(), Note.id == note_id).first()
-            output = {"id": note.id, "title": note.title, "data": note.data, "goal_date":note.goal_date }
+
+            output = {"id": note.id, "title": note.title, "data": note.data, "goal_date":date }
             return json.dumps(output), 200
         except Exception:
             raise Exception
@@ -108,23 +135,22 @@ class GetNoteByID(Resource):
 
         return json.dumps({"message deleted": "true"}),200
 
-    '''  
-        #parser = reqparse.RequestParser()
-        #parser.add_argument('new_email', help='Email cannot be blank', required=True)
-        try:
-            #data = parser.parse_args()
-            #result = re.match(r"[^@]+@[^@]+\.[^@]+", data['new_email'])
-            if not result:
-                return {
-                           'error': 'Invalid email format'
-                       }, 400
 
-            user = db.session.query(User).filter(User.username == get_jwt_identity()).first()
-            user.email = data['new_email']
-            db.session.commit()
 
-            return 200
-        except Exception:
-            raise Exception
-       
-       '''
+
+
+
+
+
+
+    
+
+
+
+
+
+
+
+
+
+

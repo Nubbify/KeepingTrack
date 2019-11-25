@@ -1,4 +1,5 @@
 from data.models import User, Note
+import datetime
 
 
 # use admin user for tests
@@ -27,18 +28,16 @@ def test_post_notes(client, app):
     access_headers = {
         'Authorization': 'Bearer ' + token
     }
-    res = client.post("/api/notes", headers=access_headers, data={"title": "New Note",
-                                                                 "goal_date": "01/01/2020",
-                                                                 "data": "help"})
+    res = client.post("/api/notes", headers=access_headers, data={"title": "New Note","goal_date": "01/01/2020","data": "help"})
     print(res)
     assert res.status_code == 200
 
     with app.app_context():
         note = Note.query.filter(Note.title == "New Note").first()
-        assert note.goal_date == "01/01/2020"
+        assert note.goal_date == datetime.date(2020,1,1)
         assert note.data == "help"
         user = User.query.filter(User.username == "utest").first()
-        assert note.owner == user.id
+        assert note.owner == user.username
 
 
 def test_get_single_note(client, app):
@@ -47,14 +46,12 @@ def test_get_single_note(client, app):
         'Authorization': 'Bearer ' + token
     }
 
-    res = client.post("/api/notes", headers=access_headers, data={"title": "New Note",
-                                                                  "goal_date": "01/01/2020",
-                                                                  "data": "help"})
+    res = client.post("/api/notes", headers=access_headers, data={"title": "New Note","goal_date": "01/01/2020","data": "help"})
     assert res.status_code == 200
 
     with app.app_context():
         note = Note.query.filter(Note.title == "New Note").first()
-        res = client.get("/notes", query_string={"note_id": note.id}, headers=access_headers, data={})
+        res = client.get("/api/notes/" + str(note.id), headers=access_headers, data={})
         assert res.status_code == 200
 
 
@@ -72,7 +69,7 @@ def test_update_note(client, app):
     with app.app_context():
         note = Note.query.filter(Note.title == "New Note").first()
 
-        res = client.put("/api/notes", query_string={"note_id": note.id}, headers=access_headers,
+        res = client.put("/api/notes/" + str(note.id), headers=access_headers,
                     data={"title": "finished note", "data": "task complete"})
         assert res.status_code == 200
         note = Note.query.filter(Note.id == note.id).first()
@@ -92,7 +89,7 @@ def test_delete_note(client, app):
     assert res.status_code == 200
     with app.app_context():
         note = Note.query.filter(Note.title == "New Note").first()
-        client.delete("/api/notes", query_string={"note_id": note.id}, headers=access_headers, data={})
+        client.delete("/api/notes/" + str(note.id), headers=access_headers, data={})
         query = Note.query.filter(Note.id == note.id).first()
         assert(query is None)
 
