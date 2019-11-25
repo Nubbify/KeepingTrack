@@ -1,85 +1,81 @@
-import React, {Component} from 'react';
-import {withStyles, ThemeProvider} from '@material-ui/core/styles'
-import {TextField, Typography, Button, createMuiTheme, CssBaseline} from "@material-ui/core";
+import React, {Fragment} from 'react';
+import {TextField, Typography, Button, CssBaseline, Toolbar} from "@material-ui/core";
 import Grid from "@material-ui/core/Grid";
 import Divider from "@material-ui/core/Divider";
+import {createMuiTheme, ThemeProvider, makeStyles} from '@material-ui/core/styles';
+import Paper from "@material-ui/core/Paper";
+import AppBar from "@material-ui/core/AppBar/AppBar";
 
-
-const theme = createMuiTheme({
-    palette: {
-        type: 'dark',
-        background: {default: '#1C313A'}
+const useStyles = makeStyles({
+    paper: {
+        marginTop: '100px',
+        borderRadius: '30px'
+    },
+    formWrapper:{
+        padding: '60px 60px 60px 60px',
+    },
+    mainText: {
+        textAlign: 'center'
+    },
+    appBar: {
+        borderRadius: '30px 30px 0 0',
+        position: 'relative',
+        boxShadow: 'none',
+        minHeight: '80px'
+    },
+    toolbar: {
+        background: 'primary',
+        minHeight: '150px'
+    },
+    divider: {
+        marginBottom: '20px',
+        marginTop: '5px'
+    },
+    startButton: {
+        marginTop: '15px',
     }
 });
 
-const styles = {
-    root: {
-        backgroundColor: theme.palette.background.default
-    },
-    mainText: {
-        color: theme.palette.text.primary,
-        marginTop: 200,
-        marginBottom: 40
-    },
-    email: {
-        marginTop: 50,
-        alignItems: 'center',
-        justify: 'center',
-        alignText: 'center',
-        color: theme.palette.text.primary
-    },
-    emailText: {
-        alignText: 'center'
-    },
-    button: {
-        margin: '15',
-        backgroundColor: theme.palette.primary.light
-    }
+const Register1 = ({nextStep, handleChange, values}) => {
+    const classes = useStyles();
+    return (
+            <Grid container direction={'column'} justify={'center'} alignItems={'center'} spacing={3}>
+                <Paper className={classes.paper}>
+                    <AppBar color="primary" className={classes.appBar}>
+                        <Toolbar className={classes.toolBar} />
+                    </AppBar>
+                    <Grid container direction={'column'} justify={'center'} alignItems={'center'} spacing={3} className={classes.formWrapper}>
+                        <Grid item xs={12}>
+                            <Typography variant={'h2'} className={classes.mainText}>
+                                Get Organized
+                            </Typography>
+                            <Divider className={classes.divider}/>
+                        </Grid>
+                        <Grid item xs={12}>
+                            <TextField
+                                label={'Enter email here'}
+                                name={'email'}
+                                onChange={handleChange}
+                                defaultValue={values.email}
+                            />
+                        </Grid>
+                        <Grid item xs={12}>
+                            <Button
+                                label={'Start'}
+                                variant={'contained'}
+                                onClick={nextStep}
+                                color={'secondary'}
+                                className={classes.startButton}
+                            >
+                                <Typography variant={'button'}>
+                                    Start
+                                </Typography>
+                            </Button>
+                        </Grid>
+                    </Grid>
+                </Paper>
+            </Grid>
+    );
 };
 
-class Register1 extends Component {
-    continue = e => {
-        e.preventDefault();
-        this.props.nextStep();
-    };
-
-    render() {
-        const {values, handleChange} = this.props;
-        const classes = this.props.classes;
-        return (
-            <ThemeProvider theme={theme}>
-                <CssBaseline />
-                <Grid container direction={'column'} justify={'center'} alignItems={'center'} spacing={3}>
-                    <Grid item xs={12}>
-                        <Typography variant={'h1'} className={classes.mainText}>Get
-                            Organized</Typography>
-                        <Divider/>
-                    </Grid>
-                    <Grid item xs={12}>
-                        <TextField
-                            className={classes.email}
-                            label={'Enter email here'}
-                            floatingLabelText={'Email'}
-                            onChange={handleChange('email')}
-                            defaultValue={values.email}
-                        />
-                    </Grid>
-                    <Grid item xs={12}>
-                        <Button
-                            label={'Start'}
-                            variant={'contained'}
-                            onClick={this.continue}
-                            className={classes.button}
-                        >
-                            <Typography variant={'button'}>
-                                Start
-                            </Typography>
-                        </Button>
-                    </Grid>
-                </Grid>
-            </ThemeProvider>
-        );
-    }
-}
-
-export default withStyles(styles)(Register1);
+export default Register1;

@@ -1,6 +1,5 @@
-import React, {Component} from 'react';
+import React, {useEffect} from 'react';
 import {BrowserRouter as Router, Route, Switch} from 'react-router-dom';
-import Navbar from './Containers/Navbar';
 import './App.css';
 import Welcome from './Pages/Welcome';
 import Home from './Pages/Home';
@@ -9,40 +8,54 @@ import Profile from './Pages/Profile';
 import Register from './Pages/Register';
 import {createMuiTheme} from "@material-ui/core";
 import {ThemeProvider} from '@material-ui/core/styles'
-import Login from "./Containers/Login";
+import LoginPage from "./Pages/LoginPage";
+import {Provider} from 'react-redux';
+import store from './store';
+import {loadUser} from "./actions/authActions";
+import setAuthToken from "./utils/setAuthToken";
+import PrivateRoute from "./Components/Routing/PrivateRoute";
 
-
-class App extends Component {
-    constructor() {
-        super();
-        this.state = {};
-        this.changePage = this.changePage.bind(this);
-    }
-
-    changePage(page, user) {
-
-    }
-
-    render() {
-        const theme = createMuiTheme({
-            palette: {
-                type: 'dark',
-                background: {default: '#1C313A'}
+const theme = createMuiTheme({
+        palette: {
+            primary: {
+                main: '#ffcc80',
+            },
+            secondary: {
+                main: '#b2dfdb',
+            },
+            background: {
+                main: '#ffffff'
             }
-        });
-        return (
-            <Router>
-                <Switch>
-                    <Route exact path={'/'}> <Welcome theme={theme}/> </Route>
-                    <Route path={'/register'}> <Register theme={theme}/> </Route>
-                    <Route path={'/login'}> <Login theme={theme}/> </Route>
-                    <Route path={'/home'}> <Home theme={theme}/> </Route>
-                    <Route path={'/cal'}> <Calendar theme={theme}/> </Route>
-                    <Route path={'/profile'}> <Profile theme={theme}/> </Route>
-                </Switch>
-            </Router>
-        )
+        },
     }
+);
+
+if (localStorage.access_token) {
+    setAuthToken(localStorage.access_token);
 }
+
+const App = () => {
+    useEffect(() => {
+        store.dispatch(loadUser())
+    }, []);
+
+    return (
+        <ThemeProvider theme={theme}>
+            <Provider store={store}>
+                <Router>
+                    <Switch>
+                        <Route exact path={'/'}> <Welcome theme={theme}/> </Route>
+                        <Route path={'/register'}> <Register theme={theme}/> </Route>
+                        <Route path={'/login'}> <LoginPage theme={theme}/> </Route>
+                        <PrivateRoute path={'/home'} component={Home} theme={theme}/>
+                        {/*<PrivateRoute path={'/home'} component={Calendar} theme={theme}/>*/}
+                        {/*<PrivateRoute path={'/home'} component={Profile} theme={theme}/>*/}
+                    </Switch>
+                </Router>
+            </Provider>
+        </ThemeProvider>
+    );
+};
+
 
 export default App;

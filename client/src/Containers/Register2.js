@@ -1,109 +1,109 @@
-import React, {Component} from 'react';
-import PropTypes from 'prop-types';
-import {withStyles, ThemeProvider} from '@material-ui/core/styles'
-import {TextField, Typography, Button, createMuiTheme, CssBaseline} from "@material-ui/core";
+import React from 'react';
+import {Button, TextField, Typography} from "@material-ui/core";
 import Grid from "@material-ui/core/Grid";
-import Divider from "@material-ui/core/Divider";
+import {makeStyles} from '@material-ui/core/styles';
+import Paper from "@material-ui/core/Paper";
+import FormControl from "@material-ui/core/FormControl";
+import clsx from "clsx";
+import InputLabel from "@material-ui/core/InputLabel";
+import OutlinedInput from "@material-ui/core/OutlinedInput";
+import InputAdornment from "@material-ui/core/InputAdornment";
+import IconButton from "@material-ui/core/IconButton";
+import {Visibility, VisibilityOff} from "@material-ui/icons";
 
-const theme = createMuiTheme({
-    palette: {
-        type: 'dark',
-        background: {default: '#1C313A'}
-    }
-});
 
-const styles = {
-    textField1: {
-        marginTop: 150,
-        alignItems: 'center',
-        justify: 'center',
-        alignText: 'center',
-        color: theme.palette.text.primary
+const useStyles = makeStyles(theme => ({
+    formWrapper: {
+        marginTop: '200px',
+        padding: '25px 25px 45px 25px',
+        justifyContent: 'center',
+        borderRadius: '20px'
     },
-    textField2: {
-        marginBottom: 20,
-        alignItems: 'center',
-        justify: 'center',
-        alignText: 'center',
-        color: theme.palette.text.primary
+    buttonGroup: {
+        marginTop: '5px'
+    },
+    margin: {
+        margin: theme.spacing(1),
+    },
+    withoutLabel: {
+        marginTop: theme.spacing(3),
     },
     textField: {
-        alignItems: 'center',
-        justify: 'center',
-        alignText: 'center',
-        color: theme.palette.text.primary
+        width: 200,
     },
-    button: {
-        margin: '15',
-        backgroundColor: theme.palette.primary.light
-    }
-};
+}));
 
-class Register2 extends Component {
-    continue = e => {
-        e.preventDefault();
-        this.props.nextStep();
-    };
-
-    back = e => {
-        e.preventDefault();
-        this.props.prevStep();
-    };
-
-    render() {
-        const {values, handleChange} = this.props;
-        const classes = this.props.classes;
-        return (
-            <ThemeProvider theme={theme}>
-                <CssBaseline/>
+const Register2 = ({nextStep, prevStep, handleSubmit, values, handleChange, handleClickShowPassword, handleMouseDownPassword, handleClickShowPassword2, handleMouseDownPassword2}) => {
+    const classes = useStyles();
+    return (
+        <Grid container direction={'column'} justify={'center'} alignItems={'center'} spacing={3}>
+            <Paper className={classes.formWrapper}>
                 <Grid container direction={'column'} justify={'center'} alignItems={'center'} spacing={3}>
                     <Grid item xs={12}>
                         <TextField
-                            className={classes.textField1}
-                            label={'First Name'}
+                            label={'User Name'}
+                            name={'userName'}
                             variant={'outlined'}
-                            floatingLabelText={'First Name'}
-                            onChange={handleChange('firstName')}
-                            defaultValue={values.firstName}
+                            onChange={handleChange}
+                            defaultValue={values.userName}
                         />
                     </Grid>
                     <Grid item xs={12}>
-                        <TextField
-                            className={classes.textField}
-                            label={'Last Name'}
-                            variant={'outlined'}
-                            floatingLabelText={'Last Name'}
-                            onChange={handleChange('lastName')}
-                            defaultValue={values.lastName}
-                        />
+                        <FormControl className={clsx(classes.margin, classes.textField)} variant="outlined">
+                            <InputLabel htmlFor="outlined-adornment-password">Password</InputLabel>
+                            <OutlinedInput
+                                id="outlined-adornment-password"
+                                type={values.showPassword ? 'text' : 'password'}
+                                value={values.password}
+                                onChange={handleChange}
+                                name={'password'}
+                                endAdornment={
+                                    <InputAdornment position="end">
+                                        <IconButton
+                                            aria-label="toggle password visibility"
+                                            onClick={handleClickShowPassword}
+                                            onMouseDown={handleMouseDownPassword}
+                                        >
+                                            {values.showPassword ? <Visibility/> : <VisibilityOff/>}
+                                        </IconButton>
+                                    </InputAdornment>
+                                }
+                                labelWidth={70}
+                            />
+                        </FormControl>
                     </Grid>
                     <Grid item xs={12}>
-                        <TextField
-                            className={classes.textField}
-                            label={'Enter Password'}
-                            variant={'outlined'}
-                            floatingLabelText={'Password'}
-                            onChange={handleChange('pass')}
-                            defaultValue={values.password}
-                        />
+                        <FormControl className={clsx(classes.margin, classes.textField)} variant="outlined">
+                            <InputLabel htmlFor="outlined-adornment-password">Password</InputLabel>
+                            <OutlinedInput
+                                id="outlined-adornment-password"
+                                type={values.showPassword2 ? 'text' : 'password'}
+                                value={values.password2}
+                                onChange={handleChange}
+                                name={'password2'}
+                                endAdornment={
+                                    <InputAdornment position="end">
+                                        <IconButton
+                                            aria-label="toggle password visibility"
+                                            onClick={handleClickShowPassword2}
+                                            onMouseDown={handleMouseDownPassword2}
+                                        >
+                                            {values.showPassword2 ? <Visibility/> : <VisibilityOff/>}
+                                        </IconButton>
+                                    </InputAdornment>
+                                }
+                                labelWidth={70}
+                            />
+                        </FormControl>
                     </Grid>
-                    <Grid item xs={12}>
-                        <TextField
-                            className={classes.textField2}
-                            label={'Confirm Password'}
-                            variant={'outlined'}
-                            floatingLabelText={'Confirm Password'}
-                            onChange={handleChange('pass2')}
-                            defaultValue={values.password2}
-                        />
-                    </Grid>
-                    <Grid container direction={'row'} justify={'center'} alignItems={'center'} spacing={3}>
+                    <Grid container direction={'row'} justify={'center'} alignItems={'center'} spacing={3}
+                          className={classes.buttonGroup}>
                         <Grid item>
                             <Button
                                 label={'Continue'}
                                 variant={'contained'}
-                                onClick={this.continue}
-                                className={classes.button}
+                                onClick={handleSubmit}
+                                color={'secondary'}
                             >
                                 <Typography variant={'button'}>
                                     Continue
@@ -114,8 +114,7 @@ class Register2 extends Component {
                             <Button
                                 label={'Back'}
                                 variant={'contained'}
-                                onClick={this.back}
-                                className={classes.button}
+                                onClick={prevStep}
                             >
                                 <Typography variant={'button'}>
                                     Back
@@ -124,9 +123,9 @@ class Register2 extends Component {
                         </Grid>
                     </Grid>
                 </Grid>
-            </ThemeProvider>
-        );
-    }
-}
+            </Paper>
+        </Grid>
+    );
+};
 
-export default withStyles(styles)(Register2);
+export default Register2;

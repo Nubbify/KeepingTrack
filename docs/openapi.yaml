@@ -15,6 +15,8 @@ tags:
   description: Endpoints relating to user customization
 - name: notes
   description: Endpoints relating to notes
+- name: attach
+  description: Endpoints relating to attachments
 paths:
   /auth/register:
     post:
@@ -109,13 +111,62 @@ paths:
           description: Wrong credentials.
         404:
           description: User not found.
+  /auth/refresh:
+    post:
+      tags:
+      - auth
+      summary: Create a new access token using a refresh token
+      operationId: refreshLogin
+      security:
+      - bearerAuth: []
+      responses:
+        200:
+          description: Bearer token refreshed
+          content:
+            application/json:
+              schema:
+                {
+                  type: "object",
+                  properties: {
+                    "access_token": { "type": "string" },
+                  },
+                  required: ["access_token"]
+                }
+              example:
+                access_token: access_token
+        401:
+          description: Wrong credentials. Make sure the refresh token is in the header.
+    get:
+      tags:
+      - auth
+      summary: Determine whether an access token is still valid
+      operationId: testAccess
+      security:
+      - bearerAuth: []
+      responses:
+        200:
+          description: Access token is valid
+          content:
+            application/json:
+              schema:
+                {
+                  type: "object",
+                  properties: {
+                    "username": { "type": "string" },
+                  },
+                  required: ["username"]
+                }
+              example:
+                username: username
+        401:
+          description: Wrong credentials. Make sure the access token is in the header.
   /user/password:
     put:
       tags:
       - user
       summary: Update a user's password.
       operationId: updatePassword
-      security: 
+      security:
       - bearerAuth: []
       requestBody:
         content:
@@ -159,16 +210,16 @@ paths:
                 goal_date: "11/30/2019"
                 data: Contents of existing note.
         401:
-          description: Authorization token is not present in header.  
+          description: Authorization token is not present in header.
         403:
-          description: Old password does not match existing password.       
+          description: Old password does not match existing password.
   /user/email:
     put:
       tags:
       - user
       summary: Update a user's email.
       operationId: updateEmail
-      security: 
+      security:
       - bearerAuth: []
       requestBody:
         content:
@@ -190,14 +241,14 @@ paths:
         400:
           description: Email is not a valid email.
         401:
-          description: Authorization token is not present in header.  
+          description: Authorization token is not present in header.
   /notes:
     get:
       tags:
       - notes
       summary: Get all notes linked to the Bearer token's account.
       operationId: getAllNotes
-      security: 
+      security:
       - bearerAuth: []
       responses:
         200:
@@ -206,7 +257,7 @@ paths:
             application/json:
               schema:
                 type: "array"
-                items: 
+                items:
                   type: "object"
                   properties: {
                     "id": { "type": "integer" },
@@ -228,7 +279,7 @@ paths:
                   owner: 1
                   title: Existing note parent
         401:
-          description: Authorization token is not present in header.  
+          description: Authorization token is not present in header.
     post:
       tags:
       - notes
@@ -252,7 +303,7 @@ paths:
               goal_date: "help"
               data: "01/01/2020"
         required: true
-      security: 
+      security:
       - bearerAuth: []
       responses:
         200:
@@ -263,7 +314,7 @@ paths:
     get:
       tags:
       - notes
-      parameters: 
+      parameters:
       - in: path
         name: note_id
         description: "ID of note to get information for."
@@ -272,7 +323,7 @@ paths:
           type: integer
       summary: Get all relevant data for specific note.
       operationId: getNote
-      security: 
+      security:
       - bearerAuth: []
       responses:
         200:
@@ -300,13 +351,13 @@ paths:
                 goal_date: "11/30/2019"
                 data: Contents of existing note.
         401:
-          description: Authorization token is not present in header.  
+          description: Authorization token is not present in header.
         403:
           description: Note does not exist or user is not authorized to view this note.
     put:
       tags:
       - notes
-      parameters: 
+      parameters:
       - in: path
         name: note_id
         description: "ID of note to update."
@@ -331,7 +382,7 @@ paths:
               title: "New note title"
               data: "This is the content of the note that just got updated."
         required: true
-      security: 
+      security:
       - bearerAuth: []
       responses:
         200:
@@ -357,7 +408,7 @@ paths:
         400:
           description: Bad or malformed input.
         401:
-          description: Authorization token is not present in header.    
+          description: Authorization token is not present in header.
         403:
           description: Note does not exist or user is not authorized to modify this note.
     delete:
@@ -371,8 +422,8 @@ paths:
         schema:
           type: integer
       summary: Delete note.
-      operationId: deleteNote 
-      security: 
+      operationId: deleteNote
+      security:
       - bearerAuth: []
       responses:
         200:
@@ -384,15 +435,144 @@ paths:
                   type: "object",
                   properties: {
                     "message deleted": {"type":"string"},
-                    
+
                   },
                 }
               example:
                 message deleted: "true"
         401:
-          description: Authorization token is not present in header.    
+          description: Authorization token is not present in header.
         403:
           description: Note does not exist or user is not authorized to delete this note.
+
+  /attach/upload:
+    post:
+      tags:
+      - attach
+      parameters: 
+      - in: path
+        name: note_id
+        description: "ID of note to get information for."
+        required: true
+        schema:
+          type: integer
+      summary: Upload a file
+      operationId: upload
+      security: 
+      - bearerAuth: []
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              {
+                type: "object",
+                properties: {
+                  "file": { "type": "string", format: byte, description: "Base-64 encoded contents of file"},
+                  "filename": { "type": "string" },
+                  "note_id": {"type": "integer"}
+                },
+                required: ["filename", "file", "note_id"]
+              }
+            example:
+              #coming soon
+              
+        required: true
+      responses:
+        200:
+          description: Attachment uploaded to database.
+          content:
+            application/json:
+              schema:
+                {
+                  type: "object",
+                  properties: {
+                    "attachment_id": {type: integer}
+                  },
+                  required: ["attachment_id"]
+                }
+              example:
+                attachment_id: 5
+        400:
+          description: Bad request body. Make sure all required fields are present.
+        401:
+          description: Authorization token is not present in header.  
+        403:
+          description: Note does not exist or user is not authorized to add files to this note.
+          
+  /attach/{attachment_id}:
+    get:
+      tags:
+      - attach
+      parameters: 
+      - in: path
+        name: attachment_id
+        description: "ID of note to get information for."
+        required: true
+        schema:
+          type: integer
+      summary: Get a file from database.
+      operationId: getAttachment
+      security: 
+      - bearerAuth: []
+      responses:
+        200:
+          description: Attachment found and returned.
+          content:
+            application/json:
+              schema:
+                {
+                  type: "object",
+                  properties: {
+                    "attachment_id": {type: integer},
+                    "note_id": {type: integer},
+                    "file": {type: string, format: byte, description: Base64 - encoded file}
+                  },
+                  required: ["attachment_id, note_id, file"]
+                }
+              example:
+                attachment_id: 5
+                note_id: 1
+                file: 
+        400:
+          description: Bad request.
+        401:
+          description: Authorization token is not present in header.  
+        403:
+          description: Attachment does not exist. 
+      
+    delete:
+      tags:
+        - attach
+      parameters:
+      - in: path
+        name: attachment_id
+        description: "ID of attachment to delete."
+        required: true
+        schema:
+          type: integer
+      summary: Delete attachment.
+      operationId: deleteAttachment 
+      security: 
+      - bearerAuth: []
+      responses:
+        200:
+          description: Note deleted.
+          content:
+            application/json:
+              schema:
+                {
+                  type: "object",
+                  properties: {
+                    "note_id": {type: integer}
+                    
+                  },
+                }
+              example:
+               note_id: 3
+        401:
+          description: Authorization token is not present in header.    
+        403:
+          description: Attachment does not exist or user is not authorized to delete this attachment.
 components:
   securitySchemes:
     bearerAuth:            
