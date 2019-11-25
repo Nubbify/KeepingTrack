@@ -10,6 +10,10 @@ build:
   script:
     - pip install -r requirements.txt
     - python setup.py install
+    - coverage run setup.py test
+    - coverage report -m
+
+
 
 
 test:
