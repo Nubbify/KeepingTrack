@@ -5,6 +5,7 @@ export const EDIT_NOTE = 'EDIT_NOTE';
 export const SAVE_NOTE = 'SAVE_NOTE';
 export const OPEN_NOTE = 'OPEN_NOTE';
 export const DELETE_NOTE = 'DELETE_NOTE';
+export const NOTE_FAIL = 'NOTE_FAIL';
 export const REGISTER_SUCCESS = 'REGISTER_SUCCESS';
 export const REGISTER_FAIL = 'REGISTER_FAIL';
 export const USER_LOADED = 'USER_LOADED';
