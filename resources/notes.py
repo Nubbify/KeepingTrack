@@ -19,7 +19,7 @@ class GetAllNotes(Resource):
        print(notes)
        output = []
        for note in notes :
-           d = {"id": note.id, "parent_id" : note.parent_id, "title":note.title}
+           d = {"id": note.id, "parent_id" : note.parent_id, "title":note.title, "owner":note.owner, }
            output.append(d)
        #need to add notes to return
        return Serializer.serialize_list(notes), 200
@@ -27,7 +27,7 @@ class GetAllNotes(Resource):
     @jwt_required
     def post(self):
         parser = reqparse.RequestParser()
-        parser.add_argument('title', help='Add a title', required=True)
+        parser.add_argument('title', help='Add a title', required=False)
         parser.add_argument('data', help='Add a note body', required=False)
         parser.add_argument('parent_id', required = False)
         parser.add_argument('goal_date', required = False)
@@ -42,6 +42,7 @@ class GetAllNotes(Resource):
 
 
         try:
+            date = None
             data = parser.parse_args()
             if(data['goal_date'] is not None):
                 date = datetime.strptime(data['goal_date'], "%d/%m/%Y").date()

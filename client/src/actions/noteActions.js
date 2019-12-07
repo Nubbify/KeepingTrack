@@ -2,12 +2,12 @@ import axios from 'axios';
 import { FETCH_NOTES, NEW_NOTE, START_NOTE, EDIT_NOTE, SAVE_NOTE, DELETE_NOTE, OPEN_NOTE } from "./types";
 
 const noteTemplate = {
-    id: null,
-    owner: null,
-    parent_id: null,
-    title: '',
-    goal_date: '',
-    data: ''
+    //id: null,
+    owner: "test",
+    parent_id: -1,
+    title: 'test',
+    goal_date: '1/1/2020',
+    data: 'test-data'
 };
 
 export const fetchNotes = () => dispatch => {
@@ -15,9 +15,10 @@ export const fetchNotes = () => dispatch => {
         method: 'GET',
         headers: {
             'content-type': 'application/json'
+
         },
     })
-        .then(res => res.json())
+        .then(res => res.json)
         .then(notes => dispatch({
             type: FETCH_NOTES,
             payload: notes
@@ -29,10 +30,11 @@ export const createNote = noteData => dispatch => {
         method: 'POST',
         headers: {
             'content-type': 'application/json'
+            
         },
         body: JSON.stringify(noteData)
     })
-        .then(res => res.json())
+        .then(res => res.json)
         .then(note => dispatch({
             type: NEW_NOTE,
             payload: note
@@ -65,10 +67,11 @@ export const saveNote = noteData => dispatch => {
         method: 'PUT',
         headers: {
             'content-type': 'application/json'
+            
         },
         body: JSON.stringify(noteData)
     })
-        .then(res => res.json())
+        .then(res => res.json)
         .then(note => dispatch({
             type: SAVE_NOTE,
             payload: note
