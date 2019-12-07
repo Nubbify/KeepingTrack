@@ -38,6 +38,16 @@ const NoteExpanded = ({note, editNote, createNote, saveNote, mode}) => {
         updateNote({...noteCur, [e.target.name]: e.target.value});
     };
 
+    const submitNote = e => {
+        e.preventDefault();
+        if(mode==='create'){
+            createNote(noteCur);
+        }else{
+            saveNote(noteCur);
+        }
+    };
+
+
     if (note === null) {
         return (
             ''
@@ -49,7 +59,7 @@ const NoteExpanded = ({note, editNote, createNote, saveNote, mode}) => {
                     <Grid item xs={12}>
                         <TextField label={"title"}
                                    name={"title"}
-                                   handleChange={handleNoteChange}
+                                   onChange={handleNoteChange}
                                    className={classes.title}/>
                     </Grid>
                     <Grid item xs={12}>
@@ -87,7 +97,7 @@ const NoteExpanded = ({note, editNote, createNote, saveNote, mode}) => {
                     <Grid item xs={12}>
                         <TextField
                             className={classes.body}
-                            handleChange={handleNoteChange}
+                            onChange={handleNoteChange}
                             label={'data'}
                             name={'data'}
                             multiline
@@ -95,7 +105,7 @@ const NoteExpanded = ({note, editNote, createNote, saveNote, mode}) => {
                         />
                     </Grid>
                 </Grid>
-                <Button onClick={mode === 'create' ? createNote(note) : saveNote(note)}>Save</Button>
+                <Button onClick={submitNote}>Save</Button>
             </Paper>
         )
     }

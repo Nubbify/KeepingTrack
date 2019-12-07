@@ -1,5 +1,15 @@
 import axios from 'axios';
-import { FETCH_NOTES, NEW_NOTE, START_NOTE, EDIT_NOTE, SAVE_NOTE, DELETE_NOTE, OPEN_NOTE } from "./types";
+import {
+    FETCH_NOTES,
+    NEW_NOTE,
+    START_NOTE,
+    EDIT_NOTE,
+    SAVE_NOTE,
+    NOTE_FAIL,
+    DELETE_NOTE,
+    OPEN_NOTE,
+} from "./types";
+import {loadUser} from "./authActions";
 
 const noteTemplate = {
     id: null,
@@ -24,19 +34,34 @@ export const fetchNotes = () => dispatch => {
         }))
 };
 
-export const createNote = noteData => dispatch => {
-    axios.post('http://localhost:5000/api/notes', {
-        method: 'POST',
+export const createNote = ({id, owner, parent_id, title, goal_date, data}) => async dispatch => {
+    const config = {
         headers: {
-            'content-type': 'application/json'
-        },
-        body: JSON.stringify(noteData)
-    })
-        .then(res => res.json())
-        .then(note => dispatch({
+            'Content-Type': 'application/json'
+        }
+    };
+    console.log(
+        'title:', title,
+        ' goal_date:', goal_date,
+        ' data:', data,
+        )
+
+    const body = JSON.stringify({title, goal_date, data});
+
+    try {
+        const res = await axios.post('http://localhost:5000/api/notes', body, config);
+
+        dispatch({
             type: NEW_NOTE,
-            payload: note
-        }))
+            payload: res.data
+        });
+
+        dispatch(fetchNotes());
+    } catch (err) {
+        dispatch({
+            type: NOTE_FAIL
+        })
+    }
 };
 
 export const startNote = () => dispatch => {
@@ -60,20 +85,29 @@ export const editNote = noteData => dispatch => {
     })
 };
 
-export const saveNote = noteData => dispatch => {
-    axios.put('http://localhost:5000/api/notes/'+noteData.id, {
-        method: 'PUT',
+export const saveNote = ({id, owner, parent_id, title, goal_date, data}) => async dispatch => {
+    const config = {
         headers: {
-            'content-type': 'application/json'
-        },
-        body: JSON.stringify(noteData)
-    })
-        .then(res => res.json())
-        .then(note => dispatch({
+            'Content-Type': 'application/json'
+        }
+    };
+
+    const body = JSON.stringify({title, data});
+
+    try {
+        const res = await axios.put('http://localhost:5000/api/notes'+id, body, config);
+
+        dispatch({
             type: SAVE_NOTE,
-            payload: note
-        }));
-    dispatch(fetchNotes());
+            payload: res.data
+        });
+
+        dispatch(fetchNotes());
+    } catch (err) {
+        dispatch({
+            type: NOTE_FAIL
+        })
+    }
 };
 
 export const newNote = () => dispatch => {};
