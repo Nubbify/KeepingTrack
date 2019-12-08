@@ -49,8 +49,12 @@ def create_app(test_config=None):
     return app
 
 
-def init_db():
+def reset_db():
     db.drop_all()
+    init_db()
+
+
+def init_db():
     db.create_all()
 
 
@@ -62,6 +66,13 @@ def get_db():
 @with_appcontext
 def init_db_command():
     init_db()
+    click.echo("Initialized the database")
+
+
+@click.command("reset-db")
+@with_appcontext
+def init_db_command():
+    reset_db()
     click.echo("Reset the database")
 
 
