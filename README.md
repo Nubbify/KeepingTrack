@@ -1,3 +1,6 @@
+[![pipeline status](http://cmsc435.garrettvanhoy.com/nubbify/keeping-track/badges/master/pipeline.svg)](http://cmsc435.garrettvanhoy.com/nubbify/keeping-track/commits/master)
+[![coverage report](http://cmsc435.garrettvanhoy.com/nubbify/keeping-track/badges/master/coverage.svg)](http://cmsc435.garrettvanhoy.com/nubbify/keeping-track/commits/master)
+
 # Keeping Track
 
 Keeping Track is a notetaking app with a focus on nested notes and attachments.
