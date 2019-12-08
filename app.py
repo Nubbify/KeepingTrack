@@ -27,7 +27,7 @@ def create_app(test_config=None):
     app = Flask(__name__, instance_relative_config=True)
     if test_config is None:
         app.config['JWT_SECRET_KEY'] = 'secret-key'
-        db_url = "sqlite:///" + os.path.join(app.instance_path, "database.db")
+        db_url = "sqlite:///database/database.db"
         # ensure the instance folder exists
         os.makedirs(app.instance_path, exist_ok=True)
         app.config['SQLALCHEMY_DATABASE_URI'] = db_url
@@ -49,8 +49,12 @@ def create_app(test_config=None):
     return app
 
 
-def init_db():
+def reset_db():
     db.drop_all()
+    init_db()
+
+
+def init_db():
     db.create_all()
 
 
@@ -62,6 +66,13 @@ def get_db():
 @with_appcontext
 def init_db_command():
     init_db()
+    click.echo("Initialized the database")
+
+
+@click.command("reset-db")
+@with_appcontext
+def reset_db_command():
+    reset_db()
     click.echo("Reset the database")
 
 
