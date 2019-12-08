@@ -26,6 +26,7 @@ deployment:
   type: deploy
   environment: production
   script:
+  - apt-get update
   - apt-get install sshpass
   - sshpass -p "$SERVER_PASSWORD" ssh -o StrictHostKeyChecking=no $SERVER_USERNAME_AND_ADDRESS
   - cd ~/keeping-track
