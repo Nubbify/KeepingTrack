@@ -111,7 +111,7 @@ class NoteCategories(Resource):
             new_nc = NoteCategory(category_id=cat_id, note_id=note_id)
             db.session.add(new_nc)
             db.session.commit()
-            return json.jumps({"note_id": note_id, "category_id" : cat_id, "category_name": data['name']}),200
+            return json.dumps({"note_id": note_id, "category_id" : cat_id, "category_name": data['name']}),200
         except Exception:
             return Exception
 
