@@ -71,7 +71,7 @@ def init_db_command():
 
 @click.command("reset-db")
 @with_appcontext
-def init_db_command():
+def reset_db_command():
     reset_db()
     click.echo("Reset the database")
 
