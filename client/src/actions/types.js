@@ -1,17 +1,18 @@
+// NOTES
 export const FETCH_NOTES = 'FETCH_NOTES';
-export const NEW_NOTE = 'NEW_NOTE';
-export const START_NOTE = 'START_NOTE';
-export const EDIT_NOTE = 'EDIT_NOTE';
+export const CLOSE_NOTE = 'NEW_NOTE';
 export const SAVE_NOTE = 'SAVE_NOTE';
 export const OPEN_NOTE = 'OPEN_NOTE';
 export const DELETE_NOTE = 'DELETE_NOTE';
+
+// ALERTS
 export const NOTE_FAIL = 'NOTE_FAIL';
-export const REGISTER_SUCCESS = 'REGISTER_SUCCESS';
-export const REGISTER_FAIL = 'REGISTER_FAIL';
-export const USER_LOADED = 'USER_LOADED';
 export const AUTH_ERROR = 'AUTH_ERROR';
 export const LOGIN_FAIL = 'LOGIN_FAIL';
+export const REGISTER_FAIL = 'REGISTER_FAIL';
+
+// AUTH
+export const REGISTER_SUCCESS = 'REGISTER_SUCCESS';
+export const USER_LOADED = 'USER_LOADED';
 export const LOGIN_SUCCESS = 'LOGIN_SUCCESS';
 export const LOGOUT = 'LOGOUT';
-export const OPEN_DRAWER = 'OPEN_DRAWER';
-export const CLOSE_DRAWER = 'CLOSE_DRAWER';

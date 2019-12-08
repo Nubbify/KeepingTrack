@@ -2,11 +2,11 @@ import React from 'react';
 import Navbar from "../Containers/Navbar";
 
 import clsx from 'clsx';
-import {fade, makeStyles, useTheme} from '@material-ui/core/styles';
+import {fade, makeStyles} from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import MainDrawer from "../Containers/MainDrawer";
 import NoteList from "../Containers/NoteList";
-import NoteExpanded from "../Components/NoteExpanded/NoteExpanded";
+import Note from "../Components/Note/Note";
 import Grid from "@material-ui/core/Grid";
 import SearchIcon from '@material-ui/icons/Search';
 import AddIcon from '@material-ui/icons/Add';
@@ -14,7 +14,7 @@ import InputBase from "@material-ui/core/InputBase";
 import Fab from "@material-ui/core/Fab";
 import {connect} from "react-redux";
 import PropTypes from 'prop-types'
-import {createNote, editNote, openNote, saveNote, startNote} from "../actions/noteActions";
+import {deleteNote, openNote, saveNote} from "../actions/noteActions";
 
 const drawerWidth = 240;
 
@@ -100,7 +100,7 @@ const useStyles = makeStyles(theme => ({
     }
 }));
 
-const Home = ({startNote, openNote}) => {
+const Home = ({saveNote, openNote, deleteNote, note}) => {
     const classes = useStyles();
 
     const [openD, setOpenD] = React.useState(false);
@@ -114,17 +114,9 @@ const Home = ({startNote, openNote}) => {
         setOpenD(false);
     };
 
-    const startNoteH = e => {
+    const openNoteH = (e, id) => {
         e.preventDefault();
-        setMode('create');
-        startNote();
-    };
-
-    const openNoteH = e => {
-        e.preventDefault();
-        const note = e.target;
-        setMode('save');
-        openNote(note.id);
+        openNote(id);
     };
 
     return (
@@ -156,7 +148,7 @@ const Home = ({startNote, openNote}) => {
                         <NoteList openNote={openNoteH}/>
                     </Grid>
                     <Grid item xs={7} md={8}>
-                        <NoteExpanded mode={mode}/>
+                        {note === null ? '' : <Note />}
                     </Grid>
                 </Grid>
             </main>
@@ -164,7 +156,7 @@ const Home = ({startNote, openNote}) => {
                 color="primary"
                 aria-label="add"
                 className={classes.fab}
-                onClick={startNoteH}
+                onClick={e => openNoteH(e,null)}
             >
                 <AddIcon />
             </Fab>
@@ -173,7 +165,13 @@ const Home = ({startNote, openNote}) => {
 };
 
 Home.propTypes = {
-    startNote: PropTypes.func.isRequired,
+    saveNote: PropTypes.func.isRequired,
+    openNote: PropTypes.func.isRequired,
+    deleteNote: PropTypes.func.isRequired,
 };
 
-export default connect(null, {createNote, startNote, editNote, saveNote, openNote})(Home);
+const mapStateToProps = state => ({
+    note: state.notes.note,
+});
+
+export default connect(mapStateToProps, {saveNote, openNote, deleteNote})(Home);

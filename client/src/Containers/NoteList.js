@@ -1,4 +1,4 @@
-import React, {Fragment} from 'react';
+import React, {Fragment, useEffect} from 'react';
 import PropTypes from 'prop-types';
 import {connect} from 'react-redux';
 import {fetchNotes} from "../actions/noteActions";
@@ -8,6 +8,8 @@ import {makeStyles} from '@material-ui/core/styles';
 import Divider from "@material-ui/core/Divider";
 import List from "@material-ui/core/List";
 import Typography from "@material-ui/core/Typography";
+import store from "../store";
+import {loadUser} from "../actions/authActions";
 
 const useStyles = makeStyles(theme => ({
     root: {
@@ -21,14 +23,17 @@ const useStyles = makeStyles(theme => ({
     },
 }));
 
-const NoteList = ({notes, fetchNotes}) => {
+const NoteList = ({notes, fetchNotes, openNote}) => {
     const classes = useStyles();
+    useEffect(() => {
+        fetchNotes()
+    }, []);
 
     return (
         <List className={classes.root}>
             {notes.map(note =>
-                <Fragment>
-                    <ListItem alignItems="flex-start">
+                <Fragment key={note.id}>
+                    <ListItem alignItems="flex-start" onClick={e => openNote(e, note.id)} >
                         <ListItemText
                             primary={note.title}
                             secondary={
@@ -56,6 +61,7 @@ const NoteList = ({notes, fetchNotes}) => {
 
 NoteList.propTypes = {
     fetchNotes: PropTypes.func.isRequired,
+    openNote: PropTypes.func.isRequired,
     notes: PropTypes.array.isRequired
 };
 
