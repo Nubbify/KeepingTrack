@@ -4,15 +4,13 @@ variables:
 stages:
   - build
   - test
+  - deploy
 
 build:
   stage: build
   script:
     - pip install -r requirements.txt
     - python setup.py install
-    
-
-
 
 test:
   stage: test
@@ -22,3 +20,18 @@ test:
     - python setup.py test
     - coverage run setup.py test
     - coverage report -m
+
+deployment:
+  stage: deploy
+  type: deploy
+  environment: production
+  script:
+  - apt-get install sshpass
+  - sshpass -p "$SERVER_PASSWORD" ssh -o StrictHostKeyChecking=no $SERVER_USERNAME_AND_ADDRESS
+  - cd ~/keeping-track
+  - git checkout master
+  - pull master
+  - docker-compose build
+  - docker-compose up
+  only:
+  - master
