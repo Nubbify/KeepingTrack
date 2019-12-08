@@ -1,7 +1,28 @@
 import axios from 'axios';
-import {CREATE_CAT, ASSIGN_CAT, UNASSIGN_CAT, DELETE_CAT, CAT_FAIL} from './types';
+import {CREATE_CAT, ASSIGN_CAT, UNASSIGN_CAT, DELETE_CAT, CAT_FAIL, FETCH_CAT} from './types';
 
-export const createCategory = ({label, color}) => async dispatch => {
+export const fetchCategories = () => async dispatch => {
+    const config = {
+        headers: {
+            'Content-Types': 'application/json',
+        },
+    };
+
+    try {
+        const res = await axios.get('http://localhost:5000/api/categories', config);
+
+        dispatch({
+            type: FETCH_CAT,
+            payload: res.data,
+        })
+    } catch (err) {
+        dispatch({
+            type: CAT_FAIL
+        })
+    }
+};
+
+export const createCategory = ({name, color}) => async dispatch => {
     // already have category ? alert
     //else add
     const config = {
@@ -10,7 +31,7 @@ export const createCategory = ({label, color}) => async dispatch => {
         },
     };
 
-    const body = JSON.stringify({label: label, color: color});
+    const body = JSON.stringify({name: name, color: color});
 
     try {
         const res = await axios.post('http://localhost:5000/api/category', body, config);
@@ -19,14 +40,18 @@ export const createCategory = ({label, color}) => async dispatch => {
             type: CREATE_CAT,
             payload: res.data
         });
+        // TEMP _ REPLACE
+        return {id: 0, name: name, color: color};
+        // return res.data;
     } catch (err) {
         dispatch({
             type: CAT_FAIL,
-        })
+        });
+        return {id: 0, name: name, color: color};
     }
 };
 
-export const deleteCategory = catID => async dispatch => {
+export const deleteCategory = ({id, name, color}) => async dispatch => {
     // already have category ? alert
     //else add
     const config = {
@@ -35,13 +60,12 @@ export const deleteCategory = catID => async dispatch => {
         },
     };
 
-    const body = JSON.stringify({label: label});
-
     try {
-        const res = await axios.delete('http://localhost:5000/api/category/'+catID, config);
+        const res = await axios.delete('http://localhost:5000/api/categories/'+name, config);
 
         dispatch({
             type: DELETE_CAT,
+            payload: name,
         });
     } catch (err) {
         dispatch({
@@ -50,7 +74,7 @@ export const deleteCategory = catID => async dispatch => {
     }
 };
 
-export const assignCategory = ({catID, noteID}) => async dispatch => {
+export const assignCategory = ({id, name, color}, noteID) => async dispatch => {
     // already have category ? alert
     //else add
     const config = {
@@ -59,14 +83,14 @@ export const assignCategory = ({catID, noteID}) => async dispatch => {
         },
     };
 
-    const body = JSON.stringify({category: catID, noteID: noteID});
+    const body = JSON.stringify({name: name});
 
     try {
-        const res = await axios.post('http://localhost:5000/api/category', body, config);
+        const res = await axios.post('http://localhost:5000/api/categories/'+noteID, body, config);
 
         dispatch({
             type: ASSIGN_CAT,
-            payload: {catID, noteID}
+            payload: {name, noteID}
         });
     } catch (err) {
         dispatch({
@@ -75,7 +99,7 @@ export const assignCategory = ({catID, noteID}) => async dispatch => {
     }
 };
 
-export const unassignCategory = ({label, noteID}) => async dispatch => {
+export const unassignCategory = ({id, name, color}, noteID) => async dispatch => {
     // already have category ? alert
     //else add
     const config = {
@@ -84,14 +108,14 @@ export const unassignCategory = ({label, noteID}) => async dispatch => {
         },
     };
 
-    const body = JSON.stringify({label: label, noteID: noteID});
+    const body = JSON.stringify({name: name});
 
     try {
-        const res = await axios.post('http://localhost:5000/api/category', body, config);
+        const res = await axios.post('http://localhost:5000/api/categories/'+noteID, body, config);
 
         dispatch({
             type: UNASSIGN_CAT,
-            payload: {label, noteID}
+            payload: {name, noteID}
         });
     } catch (err) {
         dispatch({

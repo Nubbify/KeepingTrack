@@ -83,6 +83,7 @@ const Note = ({saveNote, note, categories, createCategory, assignCategory, unass
     const classes = useStyles();
 
     const [noteCur, updateNote] = React.useState(note);
+    const [selectedCats, updateSelectedCats] = React.useState([]);
 
     useEffect(() => {
         updateNote(note)
@@ -94,6 +95,28 @@ const Note = ({saveNote, note, categories, createCategory, assignCategory, unass
         const yyyy = date.getFullYear();
         const goaldate = mm + '/' + dd + '/' + yyyy;
         updateNote({...noteCur, 'goal_date': goaldate});
+    };
+
+
+    const handleUpdateCategories = e => {
+        console.log('e: ', e);
+        console.log('e.t: ', e.target);
+        console.log('e.t.v: ', e.target.value);
+        if (e) {
+            const updateCat = e.target.value;
+            if (e.target.id === 'category-selector'){
+                const selectedCat = categories.filter(cat => cat.name === updateCat);
+                if (selectedCat) {
+                    assignCategory(selectedCat,noteCur.id);
+                } else {
+                    // COLOR PICKER HERE
+                    const color = '#ab29c8';
+                    const newCat = createCategory({updateCat, color});
+                    assignCategory(newCat, noteCur.id);
+                }
+            }
+        }
+        e.preventDefault();
     };
 
     const handleNoteChange = e => {
@@ -161,13 +184,16 @@ const Note = ({saveNote, note, categories, createCategory, assignCategory, unass
                         <Autocomplete
                             multiple
                             freeSolo
-                            id="checkboxes-tags-demo"
+                            autoComplete
+                            autoHighlight
+                            id="category-selector"
                             options={categories}
                             disableCloseOnSelect
-                            getOptionLabel={option => option.label}
+                            getOptionLabel={option => option.name}
+                            // includeInputInList
                             renderOption={(option, { selected }) => (
                                 <React.Fragment>
-                                    {option.label}
+                                    {option.name}
                                     <Checkbox
                                         icon={<CheckBoxOutlineBlank fontSize={'small'}/>}
                                         checkedIcon={<CheckBox fontSize={'small'}/>}
@@ -176,6 +202,7 @@ const Note = ({saveNote, note, categories, createCategory, assignCategory, unass
                                     />
                                 </React.Fragment>
                             )}
+                            onChange={handleUpdateCategories} // value of element added or deleted from selected list
                             style={{ width: '100%' }}
                             renderInput={params => (
                                 <TextField
@@ -184,6 +211,7 @@ const Note = ({saveNote, note, categories, createCategory, assignCategory, unass
                                     label="Categories"
                                     placeholder="Categories ..."
                                     fullWidth
+
                                 />
                             )}
                         />

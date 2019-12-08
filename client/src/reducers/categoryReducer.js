@@ -1,7 +1,7 @@
 import {CREATE_CAT, ASSIGN_CAT, DELETE_CAT, UNASSIGN_CAT, CAT_FAIL} from "../actions/types";
 
 const initialState = {
-    categories: [{id: 0, label: 'Recipes', color: '#ffffff'}],
+    categories: [{id: 0, name: 'Recipes', color: '#ffffff'}],
     relationships: {},
 };
 

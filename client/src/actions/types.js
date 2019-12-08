@@ -18,6 +18,7 @@ export const LOGIN_SUCCESS = 'LOGIN_SUCCESS';
 export const LOGOUT = 'LOGOUT';
 
 // CAT
+export const FETCH_CAT = 'FETCH_CAT';
 export const CREATE_CAT = 'CREATE_CAT';
 export const ASSIGN_CAT = 'ASSIGN_CAT';
 export const UNASSIGN_CAT = 'UNASSIGN_CAT';

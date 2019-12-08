@@ -102,10 +102,11 @@ const useStyles = makeStyles(theme => ({
     }
 }));
 
-const Home = ({saveNote, openNote, deleteNote, note, open}) => {
+const Home = ({saveNote, openNote, deleteNote, note, open, loading}) => {
     useEffect(() => {
         store.dispatch(loadUser())
-    });
+    }, [loading]);
+
     const classes = useStyles();
 
     const [openD, setOpenD] = React.useState(false);
@@ -188,6 +189,7 @@ Home.propTypes = {
 const mapStateToProps = state => ({
     open: state.notes.open,
     note: state.notes.note,
+    loading: state.auth.loading,
 });
 
 export default connect(mapStateToProps, {saveNote, openNote, deleteNote})(Home);

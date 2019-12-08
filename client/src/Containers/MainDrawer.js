@@ -1,20 +1,18 @@
-import React from 'react';
+import React, {useState} from 'react';
 import PropTypes from "prop-types";
 import {connect} from 'react-redux';
-import {makeStyles, useTheme} from '@material-ui/core/styles';
+import {makeStyles} from '@material-ui/core/styles';
 import Drawer from '@material-ui/core/Drawer';
 import List from '@material-ui/core/List';
 import Typography from '@material-ui/core/Typography';
 import Divider from '@material-ui/core/Divider';
 import IconButton from '@material-ui/core/IconButton';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
-import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import ListItem from '@material-ui/core/ListItem';
-import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
-import {Checkbox} from "@material-ui/core";
-import CategoryIcon from '@material-ui/icons/Category';
-import {assignCategory, createCategory, unassignCategory} from "../actions/categoryActions";
+import {Checkbox, ListItemIcon, ListItemSecondaryAction} from "@material-ui/core";
+import {assignCategory, createCategory, deleteCategory, unassignCategory} from "../actions/categoryActions";
+import {DeleteOutlined} from "@material-ui/icons";
 
 const drawerWidth = 240;
 
@@ -33,12 +31,34 @@ const useStyles = makeStyles(theme => ({
         ...theme.mixins.toolbar,
         justifyContent: 'flex-end',
     },
+    catSectionTitle: {
+        marginLeft: '10px',
+    },
+    catChip: {
+        borderRadius: '20px',
+        padding: 0,
+        margin: 0
+    },
+    catList: {}
 }));
 
 const MainDrawer = ({open, handleDrawerClose, categories, createCategory, assignCategory, unassignCategory, deleteCategory}) => {
     const classes = useStyles();
 
-    const categories = ['homework', 'chores', 'projects', 'other'];
+    const [filters, updateFilters] = useState([]);
+
+    const handleToggle = value => () => {
+        const currentIndex = filters.indexOf(value);
+        const newFilters = [...filters];
+
+        if (currentIndex === -1) {
+            newFilters.push(value);
+        } else {
+            newFilters.splice(currentIndex, 1);
+        }
+
+        updateFilters(newFilters);
+    };
 
     return (
         <Drawer
@@ -56,15 +76,31 @@ const MainDrawer = ({open, handleDrawerClose, categories, createCategory, assign
                 </IconButton>
             </div>
             <Divider/>
-            <Typography>
+            <Typography className={classes.catSectionTitle}>
                 Categories
             </Typography>
-            <List>
-                {categories.map((cat, index) => (
-                    <ListItem button key={index}>
-                        <ListItemIcon><CategoryIcon/></ListItemIcon>
-                        <ListItemText primary={cat}/>
-                        <Checkbox/>
+            <List
+                component={'nav'}
+                aria-labelledby={'nested-list-subheader'}
+                className={classes.catList}
+            >
+                {categories.map(cat => (
+                    <ListItem key={cat.name} role={undefined} button onClick={handleToggle(cat.name)}>
+                        <ListItemIcon>
+                            <Checkbox
+                                edge={'start'}
+                                checked={filters.indexOf(cat.name) !== -1}
+                                tabIndex={-1}
+                                disableRipple
+                                inputProps={{'aria-labelledby': cat.id}}
+                            />
+                        </ListItemIcon>
+                        <ListItemText id={cat.id} primary={cat.name}/>
+                        <ListItemSecondaryAction>
+                            <IconButton edge={'end'} aria-label={'delete'}>
+                                <DeleteOutlined/>
+                            </IconButton>
+                        </ListItemSecondaryAction>
                     </ListItem>
                 ))}
             </List>
