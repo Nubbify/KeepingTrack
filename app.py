@@ -23,8 +23,8 @@ api.add_resource(UpdateUserPassword, '/user/password')
 api.add_resource(GetAllNotes, '/notes')
 api.add_resource(GetNoteByID, '/notes/<int:note_id>')
 api.add_resource(AllCategories, '/categories')
-api.add_resource(CategoryByName, '/categories/<str:category_name>')
-api.add_resource(NoteCategories, '/categories/<int:note_id>')
+api.add_resource(CategoryByName, '/categories/<string:category_name>')
+api.add_resource(NoteCategories, '/categories/note/<int:note_id>')
 
 
 def create_app(test_config=None):

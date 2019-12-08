@@ -42,12 +42,25 @@ class Category(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String)
     owner = db.Column(db.String, db.ForeignKey('user.username'))
-    color = db.Column(db.String(7)) # should be #000000
+    color = db.Column(db.String) # should be #000000
+
+    def __repr__(self):
+        return '<Category %a - %a by %a>' % (self.id, self.name, self.owner)
+
+    def serialize(self):
+        return Serializer.serialize(self)
 
 class NoteCategory(db.Model):
     __tablename__ = 'note_category'
+    match_id = db.Column(db.Integer, primary_key=True)
     category_id = db.Column(db.Integer, db.ForeignKey('category.id'))
     note_id = db.Column(db.Integer, db.ForeignKey('note.id'))
+
+    def __repr__(self):
+        return '<NoteCategory %a - %a >' % (self.category_id, self.note_id)
+
+    def serialize(self):
+        return Serializer.serialize(self)
     
 
 
