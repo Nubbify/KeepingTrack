@@ -22,7 +22,7 @@ test:
     - coverage report -m
 
 deployment:
-  stage: deployment
+  stage: deploy
   type: deploy
   environment: production
   script:
