@@ -109,7 +109,13 @@ const Home = ({saveNote, openNote, deleteNote, note, open}) => {
     const classes = useStyles();
 
     const [openD, setOpenD] = React.useState(false);
+    const [search, setSearch] = React.useState('');
     const [mode, setMode] = React.useState('');
+
+    const handleSearch = e => {
+        e.preventDefault();
+        setSearch(e.target.value);
+    };
 
     const handleDrawerOpen = () => {
         setOpenD(true);
@@ -147,10 +153,12 @@ const Home = ({saveNote, openNote, deleteNote, note, open}) => {
                                     root: classes.inputRoot,
                                     input: classes.inputInput,
                                 }}
+                                value={search}
+                                onChange={handleSearch}
                                 inputProps={{'aria-label': 'search'}}
                             />
                         </div>
-                        <NoteList openNote={openNoteH}/>
+                        <NoteList openNote={openNoteH} search={search}/>
                     </Grid>
                     <Grid item xs={7} md={8}>
                         {note === null ? '' : <Note/>}

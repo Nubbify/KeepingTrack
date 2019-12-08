@@ -5,10 +5,22 @@ import {KeyboardDatePicker, MuiPickersUtilsProvider} from "@material-ui/pickers"
 import DateFnsUtils from '@date-io/date-fns';
 import {saveNote} from "../../actions/noteActions";
 import PropTypes from 'prop-types'
-import {Button, Checkbox, Chip, Grid, GridList, GridListTile, InputBase, Paper, TextField} from "@material-ui/core";
+import {
+    Button, CardActions,
+    Checkbox,
+    Chip,
+    Grid,
+    GridList,
+    GridListTile,
+    IconButton,
+    InputBase,
+    Paper,
+    TextField
+} from "@material-ui/core";
 import {Autocomplete} from '@material-ui/lab'
-import {CheckBox, CheckBoxOutlineBlank, Filter} from "@material-ui/icons"
+import {AttachFile, CheckBox, CheckBoxOutlineBlank, Filter} from "@material-ui/icons"
 import {fade} from "@material-ui/core/styles";
+import {assignCategory, createCategory, unassignCategory} from "../../actions/categoryActions";
 
 const useStyles = makeStyles(theme => ({
     root: {
@@ -59,24 +71,17 @@ const useStyles = makeStyles(theme => ({
     },
     catList: {
         width: '100%'
-    }
+    },
+    attach: {
+        display: 'none',
+    },
 
 }));
 
 
-const Note = ({saveNote, note}) => {
+const Note = ({saveNote, note, categories, createCategory, assignCategory, unassignCategory}) => {
     const classes = useStyles();
 
-    const categories = [
-        'homework',
-        'chores',
-        'projects',
-        'papers',
-        'recipes',
-        'bread',
-        'music',
-        'lyrics',
-    ]
     const [noteCur, updateNote] = React.useState(note);
 
     useEffect(() => {
@@ -159,10 +164,10 @@ const Note = ({saveNote, note}) => {
                             id="checkboxes-tags-demo"
                             options={categories}
                             disableCloseOnSelect
-                            getOptionLabel={option => option}
+                            getOptionLabel={option => option.label}
                             renderOption={(option, { selected }) => (
                                 <React.Fragment>
-                                    {option}
+                                    {option.label}
                                     <Checkbox
                                         icon={<CheckBoxOutlineBlank fontSize={'small'}/>}
                                         checkedIcon={<CheckBox fontSize={'small'}/>}
@@ -183,54 +188,6 @@ const Note = ({saveNote, note}) => {
                             )}
                         />
                     </Grid>
-                    {/*<Grid container direction={'row'} spacing={2}>*/}
-                    {/*    <Grid item xs={6}>*/}
-                    {/*        <div className={classes.search}>*/}
-                    {/*            <div className={classes.filterIcon}>*/}
-                    {/*                <Filter/>*/}
-                    {/*            </div>*/}
-                    {/*            <Autocomplete*/}
-                    {/*                {...defaultProps}*/}
-                    {/*                disableOpenOnFocus*/}
-                    {/*            <InputBase*/}
-                    {/*                placeholder="Category…"*/}
-                    {/*                classes={{*/}
-                    {/*                    root: classes.inputRoot,*/}
-                    {/*                    input: classes.inputInput,*/}
-                    {/*                }}*/}
-                    {/*                inputProps={{'aria-label': 'search'}}*/}
-                    {/*            />*/}
-                    {/*        </div>*/}
-                    {/*    </Grid>*/}
-                    {/*    <Grid item xs={6}>*/}
-                    {/*        <GridList cellHeight={'1.5rem'} className={classes.catList} cols={2}>*/}
-                    {/*            <GridListTile cols={1}>*/}
-                    {/*                <Chip*/}
-                    {/*                    label={'cat1'}*/}
-                    {/*                    // size={'small'}*/}
-                    {/*                    onDelete={e => removeCat(e, 1)}*/}
-                    {/*                    color={'secondary'}*/}
-                    {/*                />*/}
-                    {/*            </GridListTile>*/}
-                    {/*            <GridListTile cols={1}>*/}
-                    {/*                <Chip*/}
-                    {/*                    label={'cat2'}*/}
-                    {/*                    // size={'small'}*/}
-                    {/*                    onDelete={e => removeCat(e, 1)}*/}
-                    {/*                    color={'secondary'}*/}
-                    {/*                />*/}
-                    {/*            </GridListTile>*/}
-                    {/*            <GridListTile cols={2}>*/}
-                    {/*                <Chip*/}
-                    {/*                    label={'Homework'}*/}
-                    {/*                    // size={'small'}*/}
-                    {/*                    onDelete={e => removeCat(e, 1)}*/}
-                    {/*                    color={'secondary'}*/}
-                    {/*                />*/}
-                    {/*            </GridListTile>*/}
-                    {/*        </GridList>*/}
-                    {/*    </Grid>*/}
-                    {/*</Grid>*/}
                     <Grid item xs={12}>
                         <TextField
                             className={classes.body}
@@ -244,6 +201,27 @@ const Note = ({saveNote, note}) => {
                     </Grid>
                 </Grid>
                 <Button onClick={save}>Save</Button>
+                <input
+                    accept=
+                        "text/*
+                                audio/*,
+                                video/*,
+                                image/*,
+                                .pdf,
+                                .txt,
+                                .doc,
+                                .docx,
+                                application/msword,
+                                application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                    className={classes.attach}
+                    id="attach-icon-file"
+                    type="file"
+                />
+                <label htmlFor="attach-icon-file">
+                    <IconButton color="primary" aria-label="upload document" component="span">
+                        <AttachFile />
+                    </IconButton>
+                </label>
             </Paper>
         )
     }
@@ -256,8 +234,9 @@ Note.propTypes = {
 
 const mapStateToProps = state => ({
     note: state.notes.note,
+    categories: state.cat.categories,
 });
 
 export default connect(
     mapStateToProps,
-    {saveNote})(Note);
+    {saveNote, createCategory, assignCategory, unassignCategory})(Note);

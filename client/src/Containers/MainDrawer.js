@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from "prop-types";
+import {connect} from 'react-redux';
 import {makeStyles, useTheme} from '@material-ui/core/styles';
 import Drawer from '@material-ui/core/Drawer';
 import List from '@material-ui/core/List';
@@ -13,6 +14,7 @@ import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import {Checkbox} from "@material-ui/core";
 import CategoryIcon from '@material-ui/icons/Category';
+import {assignCategory, createCategory, unassignCategory} from "../actions/categoryActions";
 
 const drawerWidth = 240;
 
@@ -33,7 +35,7 @@ const useStyles = makeStyles(theme => ({
     },
 }));
 
-const MainDrawer = ({open, handleDrawerClose}) => {
+const MainDrawer = ({open, handleDrawerClose, categories, createCategory, assignCategory, unassignCategory, deleteCategory}) => {
     const classes = useStyles();
 
     const categories = ['homework', 'chores', 'projects', 'other'];
@@ -76,4 +78,8 @@ MainDrawer.propTypes = {
     handleDrawerClose: PropTypes.func.isRequired,
 };
 
-export default MainDrawer;
+const mapStateToProps = state => ({
+    categories: state.cat.categories,
+});
+
+export default connect(mapStateToProps, {createCategory, assignCategory, unassignCategory, deleteCategory})(MainDrawer);
