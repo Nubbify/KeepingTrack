@@ -9,10 +9,11 @@ RUN apt-get update -y && \
 
 # We copy just the requirements.txt first to leverage Docker cache
 COPY ./requirements.txt /server/requirements.txt
+VOLUME ["/database"]
 
 WORKDIR /server
 
-RUN python3 -m pip install -r requirements.txt
+RUN python3 -m pip install -r requirements.txt -q
 
 
 # Copy the server files (exclude react client) into the server folder
@@ -23,5 +24,4 @@ ENV LC_ALL C.UTF-8
 ENV LANG C.UTF-8
 
 # Initialize the db and run flask automatically if no command is specified
-RUN flask init-db 
-CMD flask run --host=0.0.0.0
+CMD flask init-db; flask run --host=0.0.0.0
