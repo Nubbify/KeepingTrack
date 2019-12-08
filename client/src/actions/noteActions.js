@@ -6,7 +6,6 @@ export const fetchNotes = () => async dispatch => {
         method: 'GET',
         headers: {
             'content-type': 'application/json'
-
         }
     };
 
@@ -61,15 +60,7 @@ export const saveNote = ({id, owner, parent_id, title, goal_date, data}) => asyn
             })
         }
     } else {
-        console.log(
-            'title:', title,
-            ' goal_date:', goal_date,
-            ' data:', data,
-        );
-
         const body = JSON.stringify({title, goal_date, data});
-
-        console.log('body: ', body);
 
         try {
             const res = await axios.post('http://localhost:5000/api/notes', body, config);
@@ -103,6 +94,9 @@ export const deleteNote = (noteID) => async dispatch => {
             type: DELETE_NOTE,
             payload: res.data,
         });
+
+        dispatch(fetchNotes());
+
     } catch (err) {
         dispatch({
             type: NOTE_FAIL
