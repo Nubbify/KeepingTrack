@@ -3,6 +3,8 @@ version: '3.4'
 services: 
     server:
         build: .
+        volumes:
+            - ./database:/server/database
         ports:
             - "5000:5000"  
 
