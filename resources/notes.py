@@ -14,8 +14,8 @@ class GetAllNotes(Resource):
     @jwt_required
     def get(self):
         notes = db.session.query(Note).filter(Note.owner == get_jwt_identity()).all()
-        print(type(notes))
-        print(notes)
+        #print(type(notes))
+        #print(notes)
         output = []
         for note in notes:
             d = {
