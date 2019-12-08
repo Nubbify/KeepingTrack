@@ -31,7 +31,7 @@ def test_add_category(client,app):
 						data={})
 	#print(res)
 	assert res.status_code == 200
-
+'''
 def test_add_notecat(client,app):
     token = setup_get_token(client, app)
     res = client.post("/api/notes", headers={'Authorization': 'Bearer ' + token},
@@ -41,7 +41,7 @@ def test_add_notecat(client,app):
     res = client.post("/api/categories/note/1", headers={'Authorization': 'Bearer ' + token}, data={"name":"testing"})
     assert res.status_code == 200
 
-
+'''
 
 
 
