@@ -28,7 +28,7 @@ deployment:
   script:
   - apt-get update
   - apt-get install sshpass
-  - sshpass -p "$SSHPASS" ssh -o StrictHostKeyChecking=no -o PreferredAuthentications=password -tt $SERVER_USERNAME_AND_ADDRESS "cd keeping-track; git checkout master; git pull; docker-compose up --build --force-recreate -d; exit"
+  - sshpass -p "$SSHPASS" ssh -o StrictHostKeyChecking=no -o PreferredAuthentications=password -tt $SERVER_USERNAME_AND_ADDRESS "cd keeping-track; git checkout master; git pull; docker-compose stop; docker-compose up --build --force-recreate -d; exit"
   only:
   - master
 

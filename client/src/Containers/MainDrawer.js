@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React from 'react';
 import PropTypes from "prop-types";
 import {connect} from 'react-redux';
 import {makeStyles} from '@material-ui/core/styles';
@@ -11,7 +11,7 @@ import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import {Checkbox, ListItemIcon, ListItemSecondaryAction} from "@material-ui/core";
-import {assignCategory, createCategory, deleteCategory, unassignCategory} from "../actions/categoryActions";
+import {deleteCategory, filterCatsH} from "../actions/categoryActions";
 import {DeleteOutlined} from "@material-ui/icons";
 
 const drawerWidth = 240;
@@ -42,22 +42,29 @@ const useStyles = makeStyles(theme => ({
     catList: {}
 }));
 
-const MainDrawer = ({open, handleDrawerClose, categories, createCategory, assignCategory, unassignCategory, deleteCategory}) => {
+const MainDrawer = ({open, handleDrawerClose, categories, filterCats, filterCatsH, deleteCategory}) => {
     const classes = useStyles();
 
-    const [filters, updateFilters] = useState([]);
+    const [filters, updateFilters] = React.useState([]);
 
     const handleToggle = value => () => {
-        const currentIndex = filters.indexOf(value);
-        const newFilters = [...filters];
+        const currentIndex = filterCats.indexOf(value);
+        const newFilters = [...filterCats];
 
         if (currentIndex === -1) {
             newFilters.push(value);
+            filterCatsH(value, 1);
         } else {
             newFilters.splice(currentIndex, 1);
+            filterCatsH(value, -1);
         }
 
         updateFilters(newFilters);
+    };
+
+    const handleDelete = (e, catID) => {
+        e.preventDefault();
+        deleteCategory(catID);
     };
 
     return (
@@ -85,11 +92,11 @@ const MainDrawer = ({open, handleDrawerClose, categories, createCategory, assign
                 className={classes.catList}
             >
                 {categories.map(cat => (
-                    <ListItem key={cat.name} role={undefined} button onClick={handleToggle(cat.name)}>
+                    <ListItem key={cat.id} role={undefined} button onClick={handleToggle(cat.id)}>
                         <ListItemIcon>
                             <Checkbox
                                 edge={'start'}
-                                checked={filters.indexOf(cat.name) !== -1}
+                                checked={filters.indexOf(cat.id) !== -1}
                                 tabIndex={-1}
                                 disableRipple
                                 inputProps={{'aria-labelledby': cat.id}}
@@ -97,7 +104,7 @@ const MainDrawer = ({open, handleDrawerClose, categories, createCategory, assign
                         </ListItemIcon>
                         <ListItemText id={cat.id} primary={cat.name}/>
                         <ListItemSecondaryAction>
-                            <IconButton edge={'end'} aria-label={'delete'}>
+                            <IconButton edge={'end'} aria-label={'delete'} onClick={e => handleDelete(e, cat)}>
                                 <DeleteOutlined/>
                             </IconButton>
                         </ListItemSecondaryAction>
@@ -116,6 +123,7 @@ MainDrawer.propTypes = {
 
 const mapStateToProps = state => ({
     categories: state.cat.categories,
+    filterCats: state.cat.filterCats,
 });
 
-export default connect(mapStateToProps, {createCategory, assignCategory, unassignCategory, deleteCategory})(MainDrawer);
+export default connect(mapStateToProps, {filterCatsH, deleteCategory})(MainDrawer);

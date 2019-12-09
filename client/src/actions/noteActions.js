@@ -1,5 +1,6 @@
 import axios from 'axios';
 import {CLOSE_NOTE, DELETE_NOTE, FETCH_NOTES, NOTE_FAIL, OPEN_NOTE, SAVE_NOTE,} from "./types";
+import {assignCategory, createCategory, unassignCategory} from "./categoryActions";
 
 export const fetchNotes = () => async dispatch => {
     const config = {
@@ -30,7 +31,7 @@ export const openNote = noteID => dispatch => {
     })
 };
 
-export const saveNote = ({id, owner, parent_id, title, goal_date, data}) => async dispatch => {
+export const saveNote = ({id, owner, parent_id, title, goal_date, data}, editorCategories, currentCategories) => async dispatch => {
     dispatch({
         type: CLOSE_NOTE
     });
@@ -78,6 +79,36 @@ export const saveNote = ({id, owner, parent_id, title, goal_date, data}) => asyn
         }
 
     }
+    console.log('here11');
+
+    if (editorCategories && editorCategories.length > 0) {
+        console.log('here12');
+        editorCategories.forEach(cat => {
+            console.log('catID: ', cat.id);
+            console.log('catID: ', cat.id===null);
+            console.log('catID: ', cat.id===null);
+            if (cat.id === undefined) {
+                console.log('here13: ', cat.id);
+                console.log('here13: ', cat.id !== null);
+                dispatch(createCategory(cat))
+            }
+            console.log('here14');
+            if (!currentCategories || currentCategories.length === 0 || currentCategories.filter(elem => elem.name === cat.name).length === 0) {
+                // new category added to note
+                console.log('here15');
+                dispatch(assignCategory(cat.name, id));
+            }
+        })
+    }
+
+    if (currentCategories && currentCategories.length > 0) {
+        currentCategories.forEach(cat => {
+            if (!editorCategories || editorCategories.length === 0 || editorCategories.filter(elem => elem.name === cat.name).length === 0) {
+                // category removed from note
+                dispatch(unassignCategory(cat, id));
+            }
+        })
+    }
 };
 
 export const deleteNote = (noteID) => async dispatch => {
@@ -88,7 +119,7 @@ export const deleteNote = (noteID) => async dispatch => {
     };
 
     try {
-        const res = await axios.delete('http://localhost:5000/api/notes/'+noteID, config);
+        const res = await axios.delete('http://localhost:5000/api/notes/' + noteID, config);
 
         dispatch({
             type: DELETE_NOTE,

@@ -61,7 +61,7 @@ const useStyles = makeStyles(theme => ({
     }
 }));
 
-const NoteList = ({notes, fetchNotes, deleteNote, openNote, search}) => {
+const NoteList = ({notes, fetchNotes, deleteNote, openNote, filtered}) => {
     const classes = useStyles();
     useEffect(() => {
         fetchNotes()
@@ -134,7 +134,8 @@ NoteList.propTypes = {
 };
 
 const mapStateToProps = state => ({
-    notes: state.notes.notes
+    notes: state.notes.notes,
+    filtered: state.cat.filtered,
 });
 
 export default connect(mapStateToProps, {fetchNotes, deleteNote})(NoteList);
