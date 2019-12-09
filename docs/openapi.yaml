@@ -264,7 +264,7 @@ paths:
                     "parent_id": { "type": "integer" },
                     "owner": { "type": "integer" },
                     "title" : { "type" : "string" },
-                    "goal_date": { "type": "string" },
+                    "goal_date": { "type": "datetime" },
                     "data": { "type": "string" }
                   }
                   required: ["id", "owner", "title"]
@@ -293,6 +293,7 @@ paths:
                 type: "object",
                 properties: {
                   "title": { "type": "string" },
+                  "parent_id": { "type": "integer" },
                   "goal_date": { "type": "string" },
                   "data": { "type": "string" }
                 },
@@ -396,7 +397,8 @@ paths:
                     "id": { "type": "integer" },
                     "title" : { "type" : "string" },
                     "goal_date": { "type": "string" },
-                    "data": { "type": "string" }
+                    "data": { "type": "string" },
+                    "parent_id": { "type": "integer" }
                   },
                   required: ["id", "owner", "title"]
                 }
@@ -417,7 +419,7 @@ paths:
       parameters:
       - in: path
         name: note_id
-        description: "ID of note to update."
+        description: "ID of note to delete."
         required: true
         schema:
           type: integer
