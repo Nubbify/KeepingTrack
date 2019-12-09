@@ -1,5 +1,14 @@
 import axios from 'axios';
-import {CREATE_CAT, ASSIGN_CAT, UNASSIGN_CAT, DELETE_CAT, CAT_FAIL, FETCH_CAT} from './types';
+import {
+    CREATE_CAT,
+    ASSIGN_CAT,
+    UNASSIGN_CAT,
+    DELETE_CAT,
+    CAT_FAIL,
+    FETCH_CAT,
+    REGISTER_SUCCESS,
+    UPDATE_SELECTED, UPDATE_RELATIONSHIPS
+} from './types';
 
 export const fetchCategories = () => async dispatch => {
     const config = {
@@ -22,6 +31,13 @@ export const fetchCategories = () => async dispatch => {
     }
 };
 
+export const updateSelected = name => dispatch => {
+    dispatch({
+        type: UPDATE_SELECTED,
+        payload: name,
+    })
+};
+
 export const createCategory = ({name, color}) => async dispatch => {
     // already have category ? alert
     //else add
@@ -31,23 +47,20 @@ export const createCategory = ({name, color}) => async dispatch => {
         },
     };
 
+    console.log('creating cat: ', name, color);
     const body = JSON.stringify({name: name, color: color});
 
     try {
-        const res = await axios.post('http://localhost:5000/api/category', body, config);
+        const res = await axios.post('http://localhost:5000/api/categories', body, config);
 
         dispatch({
             type: CREATE_CAT,
-            payload: res.data
+            payload: JSON.parse(res.data),
         });
-        // TEMP _ REPLACE
-        return {id: 0, name: name, color: color};
-        // return res.data;
     } catch (err) {
         dispatch({
             type: CAT_FAIL,
         });
-        return {id: 0, name: name, color: color};
     }
 };
 
@@ -74,9 +87,10 @@ export const deleteCategory = ({id, name, color}) => async dispatch => {
     }
 };
 
-export const assignCategory = ({id, name, color}, noteID) => async dispatch => {
+export const assignCategory = (name, noteID) => async dispatch => {
     // already have category ? alert
     //else add
+    console.log('here22: ', name, noteID);
     const config = {
         headers: {
             'Content-Type': 'application/json'
@@ -87,10 +101,11 @@ export const assignCategory = ({id, name, color}, noteID) => async dispatch => {
 
     try {
         const res = await axios.post('http://localhost:5000/api/categories/'+noteID, body, config);
+        console.log('here 25');
 
         dispatch({
             type: ASSIGN_CAT,
-            payload: {name, noteID}
+            payload: {catID: JSON.parse(res.data).category_id, noteID}
         });
     } catch (err) {
         dispatch({
@@ -115,7 +130,7 @@ export const unassignCategory = ({id, name, color}, noteID) => async dispatch =>
 
         dispatch({
             type: UNASSIGN_CAT,
-            payload: {name, noteID}
+            payload: {catID: id, noteID}
         });
     } catch (err) {
         dispatch({

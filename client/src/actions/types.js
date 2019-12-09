@@ -24,3 +24,5 @@ export const ASSIGN_CAT = 'ASSIGN_CAT';
 export const UNASSIGN_CAT = 'UNASSIGN_CAT';
 export const DELETE_CAT = 'DELETE_CAT';
 export const CAT_FAIL = 'CAT_FAIL';
+export const UPDATE_SELECTED = 'UPDATE_SELECTED';
+export const UPDATE_RELATIONSHIPS = 'UPDATE_SELECTED';

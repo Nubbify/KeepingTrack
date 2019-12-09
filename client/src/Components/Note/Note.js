@@ -20,7 +20,7 @@ import {
 import {Autocomplete} from '@material-ui/lab'
 import {AttachFile, CheckBox, CheckBoxOutlineBlank, Filter} from "@material-ui/icons"
 import {fade} from "@material-ui/core/styles";
-import {assignCategory, createCategory, unassignCategory} from "../../actions/categoryActions";
+import {assignCategory, createCategory, unassignCategory, updateSelected} from "../../actions/categoryActions";
 
 const useStyles = makeStyles(theme => ({
     root: {
@@ -79,11 +79,10 @@ const useStyles = makeStyles(theme => ({
 }));
 
 
-const Note = ({saveNote, note, categories, createCategory, assignCategory, unassignCategory}) => {
+const Note = ({saveNote, note, categories, selected, oldCat, updateSelected}) => {
     const classes = useStyles();
 
     const [noteCur, updateNote] = React.useState(note);
-    const [selectedCats, updateSelectedCats] = React.useState([]);
 
     useEffect(() => {
         updateNote(note)
@@ -98,25 +97,8 @@ const Note = ({saveNote, note, categories, createCategory, assignCategory, unass
     };
 
 
-    const handleUpdateCategories = e => {
-        console.log('e: ', e);
-        console.log('e.t: ', e.target);
-        console.log('e.t.v: ', e.target.value);
-        if (e) {
-            const updateCat = e.target.value;
-            if (e.target.id === 'category-selector'){
-                const selectedCat = categories.filter(cat => cat.name === updateCat);
-                if (selectedCat) {
-                    assignCategory(selectedCat,noteCur.id);
-                } else {
-                    // COLOR PICKER HERE
-                    const color = '#ab29c8';
-                    const newCat = createCategory({updateCat, color});
-                    assignCategory(newCat, noteCur.id);
-                }
-            }
-        }
-        e.preventDefault();
+    const handleUpdateCategories = value => {
+        updateSelected(value);
     };
 
     const handleNoteChange = e => {
@@ -129,7 +111,7 @@ const Note = ({saveNote, note, categories, createCategory, assignCategory, unass
 
     const save = e => {
         e.preventDefault();
-        saveNote(noteCur);
+        saveNote(noteCur, selected, oldCat);
     };
 
     if (note === null) {
@@ -189,8 +171,12 @@ const Note = ({saveNote, note, categories, createCategory, assignCategory, unass
                             id="category-selector"
                             options={categories}
                             disableCloseOnSelect
+                            value={selected}
                             getOptionLabel={option => option.name}
                             // includeInputInList
+                            onChange={(event, newValue) => {
+                                handleUpdateCategories(newValue);
+                            }}
                             renderOption={(option, { selected }) => (
                                 <React.Fragment>
                                     {option.name}
@@ -202,7 +188,6 @@ const Note = ({saveNote, note, categories, createCategory, assignCategory, unass
                                     />
                                 </React.Fragment>
                             )}
-                            onChange={handleUpdateCategories} // value of element added or deleted from selected list
                             style={{ width: '100%' }}
                             renderInput={params => (
                                 <TextField
@@ -263,8 +248,10 @@ Note.propTypes = {
 const mapStateToProps = state => ({
     note: state.notes.note,
     categories: state.cat.categories,
+    selected: state.cat.editorCategories,
+    oldCat: state.cat.currentCategories,
 });
 
 export default connect(
     mapStateToProps,
-    {saveNote, createCategory, assignCategory, unassignCategory})(Note);
+    {saveNote, createCategory, assignCategory, unassignCategory, updateSelected})(Note);
