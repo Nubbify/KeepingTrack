@@ -26,12 +26,8 @@ deployment:
   type: deploy
   environment: production
   script:
+  - apt-get update
   - apt-get install sshpass
-  - sshpass -p "$SERVER_PASSWORD" ssh -o StrictHostKeyChecking=no $SERVER_USERNAME_AND_ADDRESS
-  - cd ~/keeping-track
-  - git checkout master
-  - pull master
-  - docker-compose build
-  - docker-compose up
+  - sshpass -p "$SSHPASS" ssh -o StrictHostKeyChecking=no -o PreferredAuthentications=password -tt $SERVER_USERNAME_AND_ADDRESS "cd keeping-track; git checkout master; git pull; docker-compose stop; docker-compose up --build --force-recreate -d; exit"
   only:
   - master
