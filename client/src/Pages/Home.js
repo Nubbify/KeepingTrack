@@ -102,14 +102,21 @@ const useStyles = makeStyles(theme => ({
     }
 }));
 
-const Home = ({saveNote, openNote, deleteNote, note, open}) => {
+const Home = ({saveNote, openNote, deleteNote, note, open, loading}) => {
     useEffect(() => {
         store.dispatch(loadUser())
-    });
+    }, [loading]);
+
     const classes = useStyles();
 
     const [openD, setOpenD] = React.useState(false);
+    const [search, setSearch] = React.useState('');
     const [mode, setMode] = React.useState('');
+
+    const handleSearch = e => {
+        e.preventDefault();
+        setSearch(e.target.value);
+    };
 
     const handleDrawerOpen = () => {
         setOpenD(true);
@@ -147,10 +154,12 @@ const Home = ({saveNote, openNote, deleteNote, note, open}) => {
                                     root: classes.inputRoot,
                                     input: classes.inputInput,
                                 }}
+                                value={search}
+                                onChange={handleSearch}
                                 inputProps={{'aria-label': 'search'}}
                             />
                         </div>
-                        <NoteList openNote={openNoteH}/>
+                        <NoteList openNote={openNoteH} search={search}/>
                     </Grid>
                     <Grid item xs={7} md={8}>
                         {note === null ? '' : <Note/>}
@@ -180,6 +189,7 @@ Home.propTypes = {
 const mapStateToProps = state => ({
     open: state.notes.open,
     note: state.notes.note,
+    loading: state.auth.loading,
 });
 
 export default connect(mapStateToProps, {saveNote, openNote, deleteNote})(Home);

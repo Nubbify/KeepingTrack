@@ -2,6 +2,8 @@ import axios from 'axios';
 import {REGISTER_SUCCESS, REGISTER_FAIL, USER_LOADED, AUTH_ERROR, LOGIN_SUCCESS, LOGIN_FAIL, LOGOUT} from "./types";
 import setAuthToken from "../utils/setAuthToken";
 import setRefreshToken from "../utils/setRefreshToken";
+import {fetchNotes} from "./noteActions";
+import {fetchCategories} from "./categoryActions";
 
 export const loadUser = () => async dispatch => {
     if (localStorage.access_token) {
@@ -19,6 +21,8 @@ export const loadUser = () => async dispatch => {
             type: USER_LOADED,
             user: res.data
         });
+        dispatch(fetchNotes());
+        dispatch(fetchCategories());
     } catch (err) {
         dispatch({
             type: AUTH_ERROR

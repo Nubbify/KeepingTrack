@@ -16,3 +16,11 @@ export const REGISTER_SUCCESS = 'REGISTER_SUCCESS';
 export const USER_LOADED = 'USER_LOADED';
 export const LOGIN_SUCCESS = 'LOGIN_SUCCESS';
 export const LOGOUT = 'LOGOUT';
+
+// CAT
+export const FETCH_CAT = 'FETCH_CAT';
+export const CREATE_CAT = 'CREATE_CAT';
+export const ASSIGN_CAT = 'ASSIGN_CAT';
+export const UNASSIGN_CAT = 'UNASSIGN_CAT';
+export const DELETE_CAT = 'DELETE_CAT';
+export const CAT_FAIL = 'CAT_FAIL';

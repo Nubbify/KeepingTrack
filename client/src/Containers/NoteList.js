@@ -14,7 +14,8 @@ import {
     List,
     Typography
 } from "@material-ui/core";
-import {DeleteOutlined} from '@material-ui/icons'
+import {DeleteOutlined, AttachFile} from '@material-ui/icons'
+import {attachDoc} from "../actions/attachActions";
 
 const useStyles = makeStyles(theme => ({
     root: {
@@ -50,10 +51,17 @@ const useStyles = makeStyles(theme => ({
     },
     deleteIcon: {
         color: 'brown'
+    },
+    attach: {
+        display: 'none',
+        marginLeft: 0,
+    },
+    attachIcon: {
+        marginLeft: 0,
     }
 }));
 
-const NoteList = ({notes, fetchNotes, deleteNote, openNote}) => {
+const NoteList = ({notes, fetchNotes, deleteNote, openNote, search}) => {
     const classes = useStyles();
     useEffect(() => {
         fetchNotes()
@@ -62,6 +70,11 @@ const NoteList = ({notes, fetchNotes, deleteNote, openNote}) => {
     const deleteNoteH = (e, id) => {
         e.preventDefault();
         deleteNote(id);
+    };
+
+    const uploadFileH = (e, id) => {
+        e.preventDefault();
+        attachDoc(id, e.target.value);
     };
 
     return (
@@ -79,6 +92,27 @@ const NoteList = ({notes, fetchNotes, deleteNote, openNote}) => {
                         </ CardContent>
                     </CardActionArea>
                     <CardActions className={classes.actions}>
+                        <input
+                            accept=
+                                "text/*
+                                audio/*,
+                                video/*,
+                                image/*,
+                                .pdf,
+                                .txt,
+                                .doc,
+                                .docx,
+                                application/msword,
+                                application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                            className={classes.attach}
+                            id="attach-icon-file"
+                            type="file"
+                        />
+                        <label htmlFor="attach-icon-file">
+                            <IconButton color="primary" aria-label="upload document" component="span">
+                                <AttachFile />
+                            </IconButton>
+                        </label>
                         <IconButton aria-label="actions" className={classes.delete} onClick={e => deleteNoteH(e, note.id)}>
                             <DeleteOutlined className={classes.deleteIcon}/>
                         </IconButton>

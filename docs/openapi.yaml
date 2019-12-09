@@ -15,6 +15,8 @@ tags:
   description: Endpoints relating to user customization
 - name: notes
   description: Endpoints relating to notes
+- name: categories
+  description: Endpoints relating to categories 
 - name: attach
   description: Endpoints relating to attachments
 paths:
@@ -264,7 +266,7 @@ paths:
                     "parent_id": { "type": "integer" },
                     "owner": { "type": "integer" },
                     "title" : { "type" : "string" },
-                    "goal_date": { "type": "string" },
+                    "goal_date": { "type": "object" },
                     "data": { "type": "string" }
                   }
                   required: ["id", "owner", "title"]
@@ -293,6 +295,7 @@ paths:
                 type: "object",
                 properties: {
                   "title": { "type": "string" },
+                  "parent_id": { "type": "integer" },
                   "goal_date": { "type": "string" },
                   "data": { "type": "string" }
                 },
@@ -396,7 +399,8 @@ paths:
                     "id": { "type": "integer" },
                     "title" : { "type" : "string" },
                     "goal_date": { "type": "string" },
-                    "data": { "type": "string" }
+                    "data": { "type": "string" },
+                    "parent_id": { "type": "integer" }
                   },
                   required: ["id", "owner", "title"]
                 }
@@ -417,7 +421,7 @@ paths:
       parameters:
       - in: path
         name: note_id
-        description: "ID of note to update."
+        description: "ID of note to delete."
         required: true
         schema:
           type: integer
@@ -444,7 +448,236 @@ paths:
           description: Authorization token is not present in header.
         403:
           description: Note does not exist or user is not authorized to delete this note.
-
+  /categories:
+    get:
+      tags:
+      - categories
+      summary: Get all categories of the user who is logged in.
+      operationId: GetAllCategories
+      security:
+      - bearerAuth: []
+      responses:
+        200:
+          description: Categories obtained.
+          content:
+            application/json:
+              schema:
+                type: "array"
+                items:
+                  type: "object"
+                  properties: {
+                    "id": { "type": "integer" },
+                    "name": { "type": "string" },
+                    "color": { "type": "string" }
+                  }
+              example:
+                - id: 2
+                  name: science
+                  color: "#010101"
+                - id: 1
+                  name: history
+                  title: "#011101"
+        401:
+          description: Authorization token is not present in header.
+    post:
+      tags:
+      - categories
+      summary: Add a new category.
+      operationId: NewCategory
+      requestBody:
+        content:
+          application/json:
+            schema:
+              {
+                type: "object",
+                properties: {
+                  "name": { "type": "string" },
+                  "color": { "type": "string" }
+                },
+                required: ["name"]
+              }
+            example:
+              name: biology
+              color: "#451011"
+      responses:
+        200:
+          description: Category added.
+          content:
+            application/json:
+              schema:
+                {
+                  type: "object",
+                  properties: {
+                    "id": { "type": "integer" },
+                    "name": { "type": "string" },
+                    "color": { "type": "string" }
+                  },
+                }
+              example:
+                id: 4
+                name: math
+                color: "#220022"
+        400:
+          description: Bad request body.
+        401:
+          description: Authentication token missing or expired.
+          
+  /categories/{category_name}:
+    get:
+      tags:
+      - categories
+      parameters: 
+      - in: path
+        name: category_name
+        required: True
+      summary: Get the note_ids of all notes belonging to this category.
+      operationId: GetNoteCats
+      security:
+      - bearerAuth: []
+        
+      responses:
+        200:
+          description: Note_ids obtained.
+          content:
+            application/json:
+              schema:
+                type: "array"
+                items:
+                  type: "object"
+                  properties: {
+                    "note_id": { "type": "integer" }
+                  }
+              example:
+                - note_id: 1
+                - note_id: 3
+                - note_id: 4
+        401:
+          description: Authorization token is not present in header.
+        403:
+          description: Category not found.
+    delete: 
+      tags:
+      - categories
+      parameters:
+      - in: path
+        name: category_name
+        required: True
+      summary: Delete the category and remove the category from the necessary notes.
+      operationId: DeleteCategory
+      security:
+      - bearerAuth: []
+      responses:
+        200:
+          description: Category deleted.
+          content:
+            application/json:
+              schema:
+                type: "array"
+                items: 
+                  type: "object"
+                  properties: {
+                     "count" : { "type": "integer" }
+                  }
+              example:
+              - count: 6
+              
+  /notecat/{note_id}:
+    get: 
+      tags:
+      - categories
+      parameters:
+      - in: path
+        name: note_id
+        required: True
+      summary: Get all categories associated with the note.
+      operationId: GetCategoriesForNote
+      security:
+      - bearerAuth: []
+      responses:
+        200: 
+          description: Categories found.
+          content: 
+            application/json:
+              schema:
+                type: "array"
+                items: 
+                  type: "object"
+                  properties: {
+                    "id": {"type":"integer" },
+                    "name": {"type":"string"},
+                    "color": {"type":"string"}
+                  }
+                example:
+                - id: 2
+                  name: school
+                  color: "#342100"
+                - id: 6
+                  name: social studies
+                  color: "#342105"
+        401:
+          description: Authorization token is not present in header.
+        403:
+          description: Note not found.
+    
+    post:
+      tags:
+      - categories
+      parameters:
+      - in: path
+        name: note_id
+        required: True
+      summary: Add one category to the note.
+      operationId: AddCatToNote
+      security:
+      - bearerAuth: []
+      responses:
+        200:
+          description: Category added to note.
+          content:
+            application/json:
+              schema: 
+                type: "object"
+                properties: {
+                  "note_id": {"type" : "integer"},
+                  "category_id": {"type": "integer"},
+                  "category_name": {"type": "string"}
+                }
+              example:
+              - note_id: 3
+                category_id: 2
+                category_name: math
+        401:
+          description: Authorization token is not present in header.
+        403:
+          description: Note not found.
+                
+    delete:
+      tags:
+      - categories
+      parameters:
+      - in: path
+        name: note_id
+        required: True
+      summary: Remove one category from the note.
+      operationId: RemoveCatFromNote
+      security:
+      - bearerAuth: []
+      responses:
+        200:
+          description: Category removed from note if present.
+          content: 
+            application/json:
+              schema:
+                type: "object"
+                properties: {
+                  "message": {"type": "string"}
+                }
+              example:
+              - "message" : "category removed"
+        401:
+          description: Authorization token is not present in header.
+        403:
+          description: Note not found.
   /attach/upload:
     post:
       tags:

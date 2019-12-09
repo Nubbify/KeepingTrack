@@ -14,8 +14,8 @@ class GetAllNotes(Resource):
     @jwt_required
     def get(self):
         notes = db.session.query(Note).filter(Note.owner == get_jwt_identity()).all()
-        print(type(notes))
-        print(notes)
+        #print(type(notes))
+        #print(notes)
         output = []
         for note in notes:
             d = {
@@ -52,23 +52,23 @@ class GetAllNotes(Resource):
             data = parser.parse_args()
             if (data['goal_date'] is not None):
                 date = datetime.strptime(data['goal_date'], "%m/%d/%Y").date()
-                print(date)
-                print(type(date))
+                #print(date)
+                #print(type(date))
             new_note = Note(owner=get_jwt_identity(), title=data['title'], data=data['data']
                             , goal_date=date, parent_id=data['parent_id'])
             db.session.add(new_note)
             db.session.commit()
-            print(type(new_note.goal_date))
+            #print(type(new_note.goal_date))
             date = None
             if (new_note.goal_date is not None):
                 date = "" + str(new_note.goal_date.month) + "/" + str(new_note.goal_date.day) + "/" + str(
                     new_note.goal_date.year)
-                print(date)
+                #print(date)
 
             output = {"id": new_note.id, "title": new_note.title, "data": new_note.data,
                       "goal_date": date,
                       "parent_id": new_note.parent_id, "owner": new_note.owner}
-            print(json.dumps(output))
+            #print(json.dumps(output))
             return json.dumps(output), 200
 
         except Exception:

@@ -5,10 +5,22 @@ import {KeyboardDatePicker, MuiPickersUtilsProvider} from "@material-ui/pickers"
 import DateFnsUtils from '@date-io/date-fns';
 import {saveNote} from "../../actions/noteActions";
 import PropTypes from 'prop-types'
-import {Button, Checkbox, Chip, Grid, GridList, GridListTile, InputBase, Paper, TextField} from "@material-ui/core";
+import {
+    Button, CardActions,
+    Checkbox,
+    Chip,
+    Grid,
+    GridList,
+    GridListTile,
+    IconButton,
+    InputBase,
+    Paper,
+    TextField
+} from "@material-ui/core";
 import {Autocomplete} from '@material-ui/lab'
-import {CheckBox, CheckBoxOutlineBlank, Filter} from "@material-ui/icons"
+import {AttachFile, CheckBox, CheckBoxOutlineBlank, Filter} from "@material-ui/icons"
 import {fade} from "@material-ui/core/styles";
+import {assignCategory, createCategory, unassignCategory} from "../../actions/categoryActions";
 
 const useStyles = makeStyles(theme => ({
     root: {
@@ -59,25 +71,19 @@ const useStyles = makeStyles(theme => ({
     },
     catList: {
         width: '100%'
-    }
+    },
+    attach: {
+        display: 'none',
+    },
 
 }));
 
 
-const Note = ({saveNote, note}) => {
+const Note = ({saveNote, note, categories, createCategory, assignCategory, unassignCategory}) => {
     const classes = useStyles();
 
-    const categories = [
-        'homework',
-        'chores',
-        'projects',
-        'papers',
-        'recipes',
-        'bread',
-        'music',
-        'lyrics',
-    ]
     const [noteCur, updateNote] = React.useState(note);
+    const [selectedCats, updateSelectedCats] = React.useState([]);
 
     useEffect(() => {
         updateNote(note)
@@ -89,6 +95,28 @@ const Note = ({saveNote, note}) => {
         const yyyy = date.getFullYear();
         const goaldate = mm + '/' + dd + '/' + yyyy;
         updateNote({...noteCur, 'goal_date': goaldate});
+    };
+
+
+    const handleUpdateCategories = e => {
+        console.log('e: ', e);
+        console.log('e.t: ', e.target);
+        console.log('e.t.v: ', e.target.value);
+        if (e) {
+            const updateCat = e.target.value;
+            if (e.target.id === 'category-selector'){
+                const selectedCat = categories.filter(cat => cat.name === updateCat);
+                if (selectedCat) {
+                    assignCategory(selectedCat,noteCur.id);
+                } else {
+                    // COLOR PICKER HERE
+                    const color = '#ab29c8';
+                    const newCat = createCategory({updateCat, color});
+                    assignCategory(newCat, noteCur.id);
+                }
+            }
+        }
+        e.preventDefault();
     };
 
     const handleNoteChange = e => {
@@ -156,13 +184,16 @@ const Note = ({saveNote, note}) => {
                         <Autocomplete
                             multiple
                             freeSolo
-                            id="checkboxes-tags-demo"
+                            autoComplete
+                            autoHighlight
+                            id="category-selector"
                             options={categories}
                             disableCloseOnSelect
-                            getOptionLabel={option => option}
+                            getOptionLabel={option => option.name}
+                            // includeInputInList
                             renderOption={(option, { selected }) => (
                                 <React.Fragment>
-                                    {option}
+                                    {option.name}
                                     <Checkbox
                                         icon={<CheckBoxOutlineBlank fontSize={'small'}/>}
                                         checkedIcon={<CheckBox fontSize={'small'}/>}
@@ -171,6 +202,7 @@ const Note = ({saveNote, note}) => {
                                     />
                                 </React.Fragment>
                             )}
+                            onChange={handleUpdateCategories} // value of element added or deleted from selected list
                             style={{ width: '100%' }}
                             renderInput={params => (
                                 <TextField
@@ -179,58 +211,11 @@ const Note = ({saveNote, note}) => {
                                     label="Categories"
                                     placeholder="Categories ..."
                                     fullWidth
+
                                 />
                             )}
                         />
                     </Grid>
-                    {/*<Grid container direction={'row'} spacing={2}>*/}
-                    {/*    <Grid item xs={6}>*/}
-                    {/*        <div className={classes.search}>*/}
-                    {/*            <div className={classes.filterIcon}>*/}
-                    {/*                <Filter/>*/}
-                    {/*            </div>*/}
-                    {/*            <Autocomplete*/}
-                    {/*                {...defaultProps}*/}
-                    {/*                disableOpenOnFocus*/}
-                    {/*            <InputBase*/}
-                    {/*                placeholder="Category…"*/}
-                    {/*                classes={{*/}
-                    {/*                    root: classes.inputRoot,*/}
-                    {/*                    input: classes.inputInput,*/}
-                    {/*                }}*/}
-                    {/*                inputProps={{'aria-label': 'search'}}*/}
-                    {/*            />*/}
-                    {/*        </div>*/}
-                    {/*    </Grid>*/}
-                    {/*    <Grid item xs={6}>*/}
-                    {/*        <GridList cellHeight={'1.5rem'} className={classes.catList} cols={2}>*/}
-                    {/*            <GridListTile cols={1}>*/}
-                    {/*                <Chip*/}
-                    {/*                    label={'cat1'}*/}
-                    {/*                    // size={'small'}*/}
-                    {/*                    onDelete={e => removeCat(e, 1)}*/}
-                    {/*                    color={'secondary'}*/}
-                    {/*                />*/}
-                    {/*            </GridListTile>*/}
-                    {/*            <GridListTile cols={1}>*/}
-                    {/*                <Chip*/}
-                    {/*                    label={'cat2'}*/}
-                    {/*                    // size={'small'}*/}
-                    {/*                    onDelete={e => removeCat(e, 1)}*/}
-                    {/*                    color={'secondary'}*/}
-                    {/*                />*/}
-                    {/*            </GridListTile>*/}
-                    {/*            <GridListTile cols={2}>*/}
-                    {/*                <Chip*/}
-                    {/*                    label={'Homework'}*/}
-                    {/*                    // size={'small'}*/}
-                    {/*                    onDelete={e => removeCat(e, 1)}*/}
-                    {/*                    color={'secondary'}*/}
-                    {/*                />*/}
-                    {/*            </GridListTile>*/}
-                    {/*        </GridList>*/}
-                    {/*    </Grid>*/}
-                    {/*</Grid>*/}
                     <Grid item xs={12}>
                         <TextField
                             className={classes.body}
@@ -244,6 +229,27 @@ const Note = ({saveNote, note}) => {
                     </Grid>
                 </Grid>
                 <Button onClick={save}>Save</Button>
+                <input
+                    accept=
+                        "text/*
+                                audio/*,
+                                video/*,
+                                image/*,
+                                .pdf,
+                                .txt,
+                                .doc,
+                                .docx,
+                                application/msword,
+                                application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                    className={classes.attach}
+                    id="attach-icon-file"
+                    type="file"
+                />
+                <label htmlFor="attach-icon-file">
+                    <IconButton color="primary" aria-label="upload document" component="span">
+                        <AttachFile />
+                    </IconButton>
+                </label>
             </Paper>
         )
     }
@@ -256,8 +262,9 @@ Note.propTypes = {
 
 const mapStateToProps = state => ({
     note: state.notes.note,
+    categories: state.cat.categories,
 });
 
 export default connect(
     mapStateToProps,
-    {saveNote})(Note);
+    {saveNote, createCategory, assignCategory, unassignCategory})(Note);

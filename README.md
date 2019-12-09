@@ -5,6 +5,10 @@
 
 Keeping Track is a notetaking app with a focus on nested notes and attachments.
 
+## Documentation
+
+For additional information about architecture or structure, please see the docs folder.
+
 ## Installation
 
 To set up the project, clone the git repository and then run 
