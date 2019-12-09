@@ -26,3 +26,5 @@ export const DELETE_CAT = 'DELETE_CAT';
 export const CAT_FAIL = 'CAT_FAIL';
 export const UPDATE_SELECTED = 'UPDATE_SELECTED';
 export const UPDATE_RELATIONSHIPS = 'UPDATE_SELECTED';
+export const UPDATED_FILTERED = 'UPDATED_FILTERED';
+export const FILTER = 'FILTER';

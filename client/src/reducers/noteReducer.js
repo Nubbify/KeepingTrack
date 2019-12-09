@@ -26,11 +26,11 @@ export default function(state = initialState, action){
                     open: true,
                     note: {
                         id: null,
-                        owner: "test",
+                        owner: '',
                         parent_id: -1,
-                        title: 'test',
+                        title: '',
                         goal_date: goalDate,
-                        data: 'test-data'
+                        data: ''
                     }
                 }
             }else{

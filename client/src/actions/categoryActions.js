@@ -7,7 +7,7 @@ import {
     CAT_FAIL,
     FETCH_CAT,
     REGISTER_SUCCESS,
-    UPDATE_SELECTED, UPDATE_RELATIONSHIPS
+    UPDATE_SELECTED, UPDATE_RELATIONSHIPS, UPDATED_FILTERED, FILTER
 } from './types';
 
 export const fetchCategories = () => async dispatch => {
@@ -22,13 +22,23 @@ export const fetchCategories = () => async dispatch => {
 
         dispatch({
             type: FETCH_CAT,
-            payload: res.data,
+            payload: JSON.parse(res.data),
         })
     } catch (err) {
         dispatch({
             type: CAT_FAIL
         })
     }
+};
+
+export const filterCatsH = (catID, mode) => dispatch => {
+    dispatch({
+        type: FILTER,
+        payload: {catID, mode},
+    });
+    dispatch({
+        type: UPDATED_FILTERED
+    });
 };
 
 export const updateSelected = name => dispatch => {
@@ -78,7 +88,7 @@ export const deleteCategory = ({id, name, color}) => async dispatch => {
 
         dispatch({
             type: DELETE_CAT,
-            payload: name,
+            payload: id,
         });
     } catch (err) {
         dispatch({
@@ -100,7 +110,7 @@ export const assignCategory = (name, noteID) => async dispatch => {
     const body = JSON.stringify({name: name});
 
     try {
-        const res = await axios.post('http://localhost:5000/api/categories/'+noteID, body, config);
+        const res = await axios.post('http://localhost:5000/api/notecat/'+noteID, body, config);
         console.log('here 25');
 
         dispatch({
@@ -126,7 +136,7 @@ export const unassignCategory = ({id, name, color}, noteID) => async dispatch =>
     const body = JSON.stringify({name: name});
 
     try {
-        const res = await axios.post('http://localhost:5000/api/categories/'+noteID, body, config);
+        const res = await axios.delete('http://localhost:5000/api/notecat/'+noteID, body, config);
 
         dispatch({
             type: UNASSIGN_CAT,

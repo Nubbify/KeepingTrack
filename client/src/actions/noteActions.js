@@ -84,8 +84,12 @@ export const saveNote = ({id, owner, parent_id, title, goal_date, data}, editorC
     if (editorCategories && editorCategories.length > 0) {
         console.log('here12');
         editorCategories.forEach(cat => {
-            if (!cat.id) {
-                console.log('here13');
+            console.log('catID: ', cat.id);
+            console.log('catID: ', cat.id===null);
+            console.log('catID: ', cat.id===null);
+            if (cat.id === undefined) {
+                console.log('here13: ', cat.id);
+                console.log('here13: ', cat.id !== null);
                 dispatch(createCategory(cat))
             }
             console.log('here14');
